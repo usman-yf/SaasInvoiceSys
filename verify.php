@@ -198,7 +198,7 @@ if (mysqli_num_rows($res) > 0) {
                         <?php
                         $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
                         $veri_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . BASE_URL . "/verify.php?token=" . urlencode($invoice['token']) . "&inv=" . urlencode($invoice['invoice_no']);
-                        $qr_api_url = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&ecc=M&data=" . urlencode($veri_url);
+                        $qr_api_url = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&ecc=H&data=" . urlencode($veri_url);
                         ?>
                         <div class="flex space-x-4">
                             <div class="inline-block p-2 border border-gray-100 rounded-xl bg-white shadow-sm text-center">
@@ -269,7 +269,7 @@ if (mysqli_num_rows($res) > 0) {
                         height: 256,
                         colorDark: "#000000",
                         colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.M
+                        correctLevel: QRCode.CorrectLevel.H
                     });
                     
                     var canvas = qrContainer.querySelector('canvas');
