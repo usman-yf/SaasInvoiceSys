@@ -1,0 +1,104 @@
+<?php
+// products/list.php
+require_once __DIR__ . '/../includes/header.php';
+
+$res = mysqli_query($conn, "SELECT * FROM products ORDER BY id DESC");
+?>
+
+<div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">Products & Services</h1>
+        <p class="text-gray-500 mt-1">Manage your catalog and pricing</p>
+    </div>
+    <div class="flex space-x-3">
+        <a href="/inv/products/add.php" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-4 rounded-xl shadow-sm hover:shadow transition-all flex items-center">
+            <i data-lucide="plus" class="w-4 h-4 mr-2"></i> Add Product
+        </a>
+    </div>
+</div>
+
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+    <div class="p-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between space-y-3 sm:space-y-0">
+        <div class="relative w-full sm:w-64">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="text" placeholder="Search products..." class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all">
+        </div>
+        <button class="flex items-center justify-center px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
+            <i data-lucide="filter" class="w-4 h-4 mr-2"></i> Filter
+        </button>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-500">
+            <thead class="text-xs text-gray-400 uppercase bg-gray-50">
+                <tr>
+                    <th scope="col" class="px-6 py-4 font-medium">Product Name</th>
+                    <th scope="col" class="px-6 py-4 font-medium">SKU</th>
+                    <th scope="col" class="px-6 py-4 font-medium">Price</th>
+                    <th scope="col" class="px-6 py-4 font-medium">Tax</th>
+                    <th scope="col" class="px-6 py-4 font-medium text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                <?php while($row = mysqli_fetch_assoc($res)): ?>
+                <tr class="bg-white hover:bg-gray-50/50 transition-colors group">
+                    <td class="px-6 py-4 text-gray-900 font-medium">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mr-3 text-indigo-500">
+                                <i data-lucide="box" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold text-gray-900"><?= htmlspecialchars($row['name']) ?></div>
+                                <div class="text-xs text-gray-500 font-normal">ID: #<?= str_pad($row['id'], 4, '0', STR_PAD_LEFT) ?></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <?php if(!empty($row['sku'])): ?>
+                            <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200 font-mono">
+                                <?= htmlspecialchars($row['sku']) ?>
+                            </span>
+                        <?php else: ?>
+                            <span class="text-gray-400 italic">N/A</span>
+                        <?php endif; ?>
+                    </td>
+                    <td class="px-6 py-4 font-medium text-gray-900">
+                        <?= htmlspecialchars($global_currency) ?> <?= number_format($row['price'], 2) ?>
+                    </td>
+                    <td class="px-6 py-4 text-gray-600">
+                        <?= number_format($row['tax'], 2) ?>%
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <a href="/inv/products/edit.php?id=<?= $row['id'] ?>" class="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors" title="Edit">
+                                <i data-lucide="edit" class="w-4 h-4"></i>
+                            </a>
+                            <button type="button" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete" onclick="confirmDelete('/inv/products/delete.php?id=<?= $row['id'] ?>', 'Delete product <?= htmlspecialchars($row['name'], ENT_QUOTES) ?>?')">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
+                <?php if(mysqli_num_rows($res) == 0): ?>
+                    <tr><td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                        <div class="flex flex-col items-center">
+                            <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                                <i data-lucide="package" class="w-6 h-6 text-gray-400"></i>
+                            </div>
+                            <p>No products found.</p>
+                            <a href="/inv/products/add.php" class="text-brand-600 font-medium hover:underline mt-2">Add your first product</a>
+                        </div>
+                    </td></tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination placeholder -->
+    <div class="p-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
+        <div>Showing <?= mysqli_num_rows($res) ?> products</div>
+    </div>
+</div>
+
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>

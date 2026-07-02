@@ -1,0 +1,74 @@
+Time: 2026-03-28 12:03:20
+To: wygyrucopo@mailinator.com
+Subject: Invoice INV-202603-0002 from InvSys Company
+Headers: 
+MIME-Version: 1.0
+Content-type:text/html;charset=UTF-8
+From: InvSys Company <contact@invsys.com>
+
+Body: 
+
+<html>
+<head>
+  <title>Invoice INV-202603-0002</title>
+</head>
+<body style='font-family: Arial, sans-serif; color: #333;'>
+  <div style='max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;'>
+    <h2 style='color: #0d6efd;'>Invoice INV-202603-0002</h2>
+    <p>Dear <strong>Lavinia Torres</strong>,</p>
+    <p>Please find the summary of your invoice below.</p>
+    
+    <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;'>
+      <p style='margin: 0 0 10px 0;'><strong>Invoice #:</strong> INV-202603-0002</p>
+      <p style='margin: 0 0 10px 0;'><strong>Date:</strong> 2026-03-27</p>
+      <p style='margin: 0 0 10px 0;'><strong>Status:</strong> Paid</p>
+      <p style='margin: 0 0 0 0; font-size: 18px;'><strong>Total:</strong> Rs 1,612.62</p>
+    </div>
+    
+    <p>Thank you for your business!</p>
+    <br>
+    <p style='margin: 0; font-size: 14px; color: #777;'>Best regards,</p>
+    <p style='margin: 0; font-weight: bold;'>InvSys Company</p>
+  </div>
+</body>
+</html>
+
+--------------------------------------------------------
+
+Time: 2026-03-28 12:06:05
+To: usman789y2@gmail.com
+Subject: Invoice INV-202603-0002 from InvSys Company
+Headers: 
+MIME-Version: 1.0
+Content-type:text/html;charset=UTF-8
+From: InvSys Company <contact@invsys.com>
+
+Body: 
+
+<html>
+<head>
+  <title>Invoice INV-202603-0002</title>
+</head>
+<body style='font-family: Arial, sans-serif; color: #333;'>
+  <div style='max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;'>
+    <h2 style='color: #0d6efd;'>Invoice INV-202603-0002</h2>
+    <p>Dear <strong>Lavinia Torres</strong>,</p>
+    <p>Please find the summary of your invoice below.</p>
+    
+    <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;'>
+      <p style='margin: 0 0 10px 0;'><strong>Invoice #:</strong> INV-202603-0002</p>
+      <p style='margin: 0 0 10px 0;'><strong>Date:</strong> 2026-03-27</p>
+      <p style='margin: 0 0 10px 0;'><strong>Status:</strong> Paid</p>
+      <p style='margin: 0 0 0 0; font-size: 18px;'><strong>Total:</strong> Rs 1,612.62</p>
+    </div>
+    
+    <p>Thank you for your business!</p>
+    <br>
+    <p style='margin: 0; font-size: 14px; color: #777;'>Best regards,</p>
+    <p style='margin: 0; font-weight: bold;'>InvSys Company</p>
+  </div>
+</body>
+</html>
+
+--------------------------------------------------------
+
