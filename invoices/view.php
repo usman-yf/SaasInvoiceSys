@@ -293,35 +293,63 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error')
     <!-- Tab Content: ZATCA XML & Logs -->
     <div id="tab-content-zatca" class="tab-content hidden d-print-none">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <!-- XML Content -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-                <div
-                    class="bg-brand-50 text-brand-700 px-6 py-4 border-b border-brand-100 flex justify-between items-center">
-                    <h3 class="text-lg font-bold flex items-center">
-                        <i data-lucide="file-code" class="w-5 h-5 mr-2 text-brand-600"></i> UBL 2.1 XML
-                    </h3>
-                    <?php if (!empty($invoice['xml_content'])): ?>
-                        <button
-                            onclick="navigator.clipboard.writeText(document.getElementById('xml-content').innerText); toast('XML Copied', 'success')"
-                            class="text-xs font-medium text-brand-600 hover:text-brand-800">
-                            Copy XML
-                        </button>
-                    <?php endif; ?>
+            
+            <!-- Left Column -->
+            <div class="space-y-6 flex flex-col">
+                <!-- XML Content -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+                    <div
+                        class="bg-brand-50 text-brand-700 px-6 py-4 border-b border-brand-100 flex justify-between items-center">
+                        <h3 class="text-lg font-bold flex items-center">
+                            <i data-lucide="file-code" class="w-5 h-5 mr-2 text-brand-600"></i> UBL 2.1 XML
+                        </h3>
+                        <?php if (!empty($invoice['xml_content'])): ?>
+                            <button
+                                onclick="navigator.clipboard.writeText(document.getElementById('xml-content').innerText); toast('XML Copied', 'success')"
+                                class="text-xs font-medium text-brand-600 hover:text-brand-800">
+                                Copy XML
+                            </button>
+                        <?php endif; ?>
+                    </div>
+                    <div class="p-6 flex-grow bg-gray-50 overflow-auto max-h-[500px]">
+                        <?php if (!empty($invoice['xml_content'])): ?>
+                            <pre id="xml-content"
+                                class="text-xs text-gray-600 font-mono whitespace-pre-wrap"><?= htmlspecialchars($invoice['xml_content']) ?></pre>
+                        <?php else: ?>
+                            <div class="flex flex-col items-center justify-center h-full text-gray-400 py-12">
+                                <i data-lucide="file-dashed" class="w-12 h-12 mb-3"></i>
+                                <p>XML not generated yet.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
-                <div class="p-6 flex-grow bg-gray-50 overflow-auto max-h-[500px]">
-                    <?php if (!empty($invoice['xml_content'])): ?>
-                        <pre id="xml-content"
-                            class="text-xs text-gray-600 font-mono whitespace-pre-wrap"><?= htmlspecialchars($invoice['xml_content']) ?></pre>
-                    <?php else: ?>
-                        <div class="flex flex-col items-center justify-center h-full text-gray-400 py-12">
-                            <i data-lucide="file-dashed" class="w-12 h-12 mb-3"></i>
-                            <p>XML not generated yet.</p>
+
+                <!-- Decoded QR Data Tool -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-900 flex items-center">
+                            <i data-lucide="qr-code" class="w-5 h-5 mr-2 text-purple-600"></i> Decoded QR Data (TLV)
+                        </h3>
+                    </div>
+                    <div class="p-5 border-b border-gray-100 bg-white">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Decode Custom ZATCA Base64</label>
+                        <div class="flex space-x-2">
+                            <input type="text" id="custom_qr_input" placeholder="Paste ZATCA QR Base64 string here..." 
+                                value="<?= htmlspecialchars($invoice['qr_code_tlv'] ?? '') ?>"
+                                class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-2.5 transition-colors outline-none font-mono">
+                            <button type="button" onclick="decodeZatcaQR()" 
+                                class="px-4 py-2 bg-purple-100 text-purple-700 font-medium rounded-xl hover:bg-purple-200 transition-colors text-xs whitespace-nowrap">
+                                Decode
+                            </button>
                         </div>
-                    <?php endif; ?>
+                    </div>
+                    <div class="p-6 text-sm bg-gray-50 overflow-auto max-h-[350px]" id="decoded_qr_output">
+                        <!-- JS populated -->
+                    </div>
                 </div>
             </div>
 
-            <!-- Logs and Details -->
+            <!-- Right Column: Logs and Details -->
             <div class="space-y-6">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
@@ -347,46 +375,6 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error')
                     </div>
                 </div>
 
-                <!-- Decoded QR Data -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                        <h3 class="font-bold text-gray-900 flex items-center">
-                            <i data-lucide="qr-code" class="w-5 h-5 mr-2 text-purple-600"></i> Decoded QR Data (TLV)
-                        </h3>
-                    </div>
-                    <div class="p-6 text-sm bg-gray-50 overflow-auto max-h-[300px]">
-                        <?php 
-                        if (!empty($invoice['qr_code_tlv'])) {
-                            $tlv_data = base64_decode($invoice['qr_code_tlv']);
-                            $i = 0;
-                            $tags_map = [
-                                1 => 'Seller Name', 2 => 'VAT Number', 3 => 'Timestamp',
-                                4 => 'Invoice Total', 5 => 'VAT Total', 6 => 'XML Hash',
-                                7 => 'ECDSA Signature', 8 => 'Public Key / Cert', 9 => 'Certificate Signature'
-                            ];
-                            echo '<div class="space-y-3">';
-                            while ($i < strlen($tlv_data)) {
-                                if ($i >= strlen($tlv_data)) break;
-                                $tag = ord($tlv_data[$i++]);
-                                if ($i >= strlen($tlv_data)) break;
-                                $len = ord($tlv_data[$i++]);
-                                $val = substr($tlv_data, $i, $len);
-                                $i += $len;
-                                
-                                $tag_name = $tags_map[$tag] ?? "Tag $tag";
-                                echo '<div>';
-                                echo '<p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">' . $tag_name . ' <span class="text-[10px] font-normal text-gray-400 lowercase">(Tag ' . $tag . ', Len ' . $len . ')</span></p>';
-                                echo '<div class="bg-white p-2 border border-gray-200 rounded text-gray-700 font-mono text-xs break-all">' . htmlspecialchars($val) . '</div>';
-                                echo '</div>';
-                                
-                                // Temporarily break if we hit tag 7, since tags 8+ (certificates) can exceed 255 bytes and wrap around in basic chr() implementation
-                                if ($tag == 7) break; 
-                            }
-                            echo '</div>';
-                        } else {
-                            echo '<p class="text-gray-400 italic text-center py-4">QR Code not generated yet.</p>';
-                        }
-                        ?>
                     </div>
                 </div>
 
@@ -411,6 +399,81 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error')
 <?php endif; ?>
 
 <script>
+    // ZATCA TLV Decoder JS
+    function decodeZatcaQR() {
+        const input = document.getElementById('custom_qr_input').value.trim();
+        const container = document.getElementById('decoded_qr_output');
+        
+        if (!input) {
+            container.innerHTML = '<p class="text-gray-400 italic text-center py-4">No QR code data provided.</p>';
+            return;
+        }
+        
+        container.innerHTML = '<div class="text-center py-4"><div class="animate-spin inline-block w-5 h-5 border-[3px] border-current border-t-transparent text-purple-600 rounded-full" role="status"></div></div>';
+        
+        setTimeout(() => {
+            try {
+                const binaryStr = atob(input);
+                let i = 0;
+                const tagsMap = {
+                    1: 'Seller Name', 2: 'VAT Number', 3: 'Timestamp',
+                    4: 'Invoice Total', 5: 'VAT Total', 6: 'XML Hash',
+                    7: 'ECDSA Signature', 8: 'Public Key / Cert', 9: 'Certificate Signature'
+                };
+                
+                let html = '<div class="space-y-3">';
+                while(i < binaryStr.length) {
+                    if (i >= binaryStr.length) break;
+                    const tag = binaryStr.charCodeAt(i++);
+                    if (i >= binaryStr.length) break;
+                    const len = binaryStr.charCodeAt(i++);
+                    
+                    const val = binaryStr.substring(i, i + len);
+                    i += len;
+                    
+                    // Attempt UTF-8 decoding for text fields
+                    let decodedVal = val;
+                    try {
+                        decodedVal = decodeURIComponent(escape(val));
+                    } catch(e) {
+                        // Fallback, might be pure binary (hash, sig)
+                        decodedVal = btoa(val); // show binary as base64
+                    }
+                    
+                    // Show hashes/signatures as Base64 for readability, text as text
+                    let displayVal = decodedVal;
+                    if (tag >= 6) {
+                        displayVal = btoa(val);
+                    }
+                    
+                    const tagName = tagsMap[tag] || 'Tag ' + tag;
+                    
+                    html += `<div>
+                        <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${tagName} <span class="text-[10px] font-normal text-gray-400 lowercase">(Tag ${tag}, Len ${len})</span></p>
+                        <div class="bg-white p-2 border border-gray-200 rounded text-gray-700 font-mono text-xs break-all">${escapeHtml(displayVal)}</div>
+                    </div>`;
+                    
+                    if (tag == 7) break; // Avoid parsing certificates for now to prevent length wrap bugs
+                }
+                html += '</div>';
+                container.innerHTML = html;
+                lucide.createIcons();
+            } catch (e) {
+                container.innerHTML = '<div class="p-3 bg-red-50 text-red-600 border border-red-100 rounded text-xs"><i data-lucide="alert-circle" class="w-4 h-4 inline mr-1"></i> Invalid Base64 TLV string</div>';
+                lucide.createIcons();
+            }
+        }, 100);
+    }
+    
+    function escapeHtml(text) {
+        return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // Auto-decode on load
+    document.addEventListener("DOMContentLoaded", function() {
+        decodeZatcaQR();
+    });
+
     function switchTab(tabId) {
         // Hide all tabs
         document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
