@@ -471,6 +471,14 @@ while($crow = mysqli_fetch_assoc($cres)) {
                             $a_icon = 'settings'; $a_color = 'text-slate-600'; $a_bg = 'bg-slate-100'; 
                         } elseif(strpos($t_lower, 'customer') !== false) { 
                             $a_icon = 'users'; $a_color = 'text-blue-600'; $a_bg = 'bg-blue-50'; 
+                        } elseif(strpos($t_lower, 'zatca') !== false) { 
+                            if (strpos($t_lower, 'cleared') !== false || strpos($t_lower, 'reported') !== false) {
+                                $a_icon = 'shield-check'; $a_color = 'text-green-600'; $a_bg = 'bg-green-50';
+                            } elseif (strpos($t_lower, 'rejected') !== false || strpos($t_lower, 'error') !== false) {
+                                $a_icon = 'shield-alert'; $a_color = 'text-red-600'; $a_bg = 'bg-red-50';
+                            } else {
+                                $a_icon = 'file-code'; $a_color = 'text-purple-600'; $a_bg = 'bg-purple-50';
+                            }
                         }
                     ?>
                     <div class="relative flex items-start">
