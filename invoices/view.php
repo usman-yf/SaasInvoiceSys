@@ -110,10 +110,10 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error')
             <i data-lucide="file-text" class="w-4 h-4 mr-2"></i> Invoice Preview
         </button>
         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-        <button onclick="switchTab('zatca')" id="tab-btn-zatca"
-            class="tab-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center">
-            <i data-lucide="code" class="w-4 h-4 mr-2"></i> ZATCA XML & Logs
-        </button>
+            <button onclick="switchTab('zatca')" id="tab-btn-zatca"
+                class="tab-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center">
+                <i data-lucide="code" class="w-4 h-4 mr-2"></i> ZATCA XML & Logs
+            </button>
         <?php endif; ?>
     </nav>
 </div>
@@ -198,16 +198,19 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error')
                                 <td class="px-6 py-4 text-center text-gray-400"><?= $counter++ ?></td>
                                 <td class="px-6 py-4">
                                     <p class="font-medium text-gray-900 text-base">
-                                        <?= htmlspecialchars($item['product_name']) ?></p>
+                                        <?= htmlspecialchars($item['product_name']) ?>
+                                    </p>
                                     <?= $item['sku'] ? "<p class='text-xs text-gray-500 mt-0.5'>SKU: {$item['sku']}</p>" : "" ?>
                                 </td>
                                 <td class="px-6 py-4 text-center text-gray-700"><?= number_format($item['quantity'], 2) ?>
                                 </td>
                                 <td class="px-6 py-4 text-right text-gray-700"><?= htmlspecialchars($global_currency) ?>
-                                    <?= number_format($item['price'], 2) ?></td>
+                                    <?= number_format($item['price'], 2) ?>
+                                </td>
                                 <td class="px-6 py-4 text-right text-gray-500 text-xs"><?= $tax_pct ?>%</td>
                                 <td class="px-6 py-4 text-right font-medium text-gray-900">
-                                    <?= htmlspecialchars($global_currency) ?>     <?= number_format($item['total'], 2) ?></td>
+                                    <?= htmlspecialchars($global_currency) ?>     <?= number_format($item['total'], 2) ?>
+                                </td>
                             </tr>
                         <?php endwhile; ?>
                     </tbody>
@@ -226,14 +229,14 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error')
                     <div class="flex space-x-4">
                         <div class="inline-block p-2 border border-gray-100 rounded-xl bg-white shadow-sm text-center">
                             <img src="<?= htmlspecialchars($qr_api_url) ?>" alt="QR Code"
-                                class="w-24 h-25 mb-1 mx-auto opacity-90" crossorigin="anonymous">
+                                class="w-28 h-28 mb-1 mx-auto opacity-90" crossorigin="anonymous">
                             <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Scan to
                                 Verify</span>
                         </div>
                         <?php if (!empty($invoice['qr_code_tlv'])): ?>
                             <div class="inline-block p-2 border border-gray-100 rounded-xl bg-white shadow-sm text-center">
                                 <div id="zatca-qr-container"
-                                    class="w-24 h-24 mb-1 mx-auto flex items-center justify-center overflow-hidden"
+                                    class="w-28 h-28 mb-1 mx-auto flex items-center justify-center overflow-hidden"
                                     data-qr="<?= htmlspecialchars($invoice['qr_code_tlv']) ?>"></div>
                                 <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">ZATCA QR</span>
                             </div>
@@ -279,88 +282,89 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error')
                 <p class="text-xs text-gray-400 font-medium">This is a computer-generated document and does not require
                     a signature.</p>
                 <p class="text-xs text-gray-400 font-medium">&copy; <?= date('Y') ?>
-                    <?= htmlspecialchars($company_name) ?>. All rights reserved.</p>
+                    <?= htmlspecialchars($company_name) ?>. All rights reserved.
+                </p>
             </div>
         </div>
     </div>
 </div>
 
 <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-<!-- Tab Content: ZATCA XML & Logs -->
-<div id="tab-content-zatca" class="tab-content hidden d-print-none">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <!-- XML Content -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-            <div
-                class="bg-brand-50 text-brand-700 px-6 py-4 border-b border-brand-100 flex justify-between items-center">
-                <h3 class="text-lg font-bold flex items-center">
-                    <i data-lucide="file-code" class="w-5 h-5 mr-2 text-brand-600"></i> UBL 2.1 XML
-                </h3>
-                <?php if (!empty($invoice['xml_content'])): ?>
-                    <button
-                        onclick="navigator.clipboard.writeText(document.getElementById('xml-content').innerText); toast('XML Copied', 'success')"
-                        class="text-xs font-medium text-brand-600 hover:text-brand-800">
-                        Copy XML
-                    </button>
-                <?php endif; ?>
-            </div>
-            <div class="p-6 flex-grow bg-gray-50 overflow-auto max-h-[500px]">
-                <?php if (!empty($invoice['xml_content'])): ?>
-                    <pre id="xml-content"
-                        class="text-xs text-gray-600 font-mono whitespace-pre-wrap"><?= htmlspecialchars($invoice['xml_content']) ?></pre>
-                <?php else: ?>
-                    <div class="flex flex-col items-center justify-center h-full text-gray-400 py-12">
-                        <i data-lucide="file-dashed" class="w-12 h-12 mb-3"></i>
-                        <p>XML not generated yet.</p>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <!-- Logs and Details -->
-        <div class="space-y-6">
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                    <h3 class="font-bold text-gray-900 flex items-center">
-                        <i data-lucide="shield-check" class="w-5 h-5 mr-2 text-green-600"></i> Cryptographic Details
+    <!-- Tab Content: ZATCA XML & Logs -->
+    <div id="tab-content-zatca" class="tab-content hidden d-print-none">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- XML Content -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+                <div
+                    class="bg-brand-50 text-brand-700 px-6 py-4 border-b border-brand-100 flex justify-between items-center">
+                    <h3 class="text-lg font-bold flex items-center">
+                        <i data-lucide="file-code" class="w-5 h-5 mr-2 text-brand-600"></i> UBL 2.1 XML
                     </h3>
-                </div>
-                <div class="p-6 text-sm">
-                    <div class="mb-4">
-                        <p class="text-gray-500 font-medium mb-1">Invoice Hash (SHA-256 Base64)</p>
-                        <div
-                            class="bg-gray-50 p-2 rounded border border-gray-200 font-mono text-xs break-all text-gray-600">
-                            <?= !empty($invoice['invoice_hash']) ? htmlspecialchars($invoice['invoice_hash']) : 'N/A' ?>
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-gray-500 font-medium mb-1">Cryptographic Stamp (Signature)</p>
-                        <div
-                            class="bg-gray-50 p-2 rounded border border-gray-200 font-mono text-xs break-all text-gray-600">
-                            <?= !empty($invoice['crypt_stamp']) ? htmlspecialchars($invoice['crypt_stamp']) : 'N/A' ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                    <h3 class="font-bold text-gray-900 flex items-center">
-                        <i data-lucide="activity" class="w-5 h-5 mr-2 text-blue-600"></i> ZATCA API Response
-                    </h3>
-                </div>
-                <div class="p-6 text-sm bg-gray-50 max-h-[250px] overflow-auto">
-                    <?php if (!empty($invoice['zatca_response'])): ?>
-                        <pre
-                            class="font-mono text-xs text-gray-600 whitespace-pre-wrap"><?= htmlspecialchars($invoice['zatca_response']) ?></pre>
-                    <?php else: ?>
-                        <p class="text-gray-400 italic text-center py-4">No API response recorded yet.</p>
+                    <?php if (!empty($invoice['xml_content'])): ?>
+                        <button
+                            onclick="navigator.clipboard.writeText(document.getElementById('xml-content').innerText); toast('XML Copied', 'success')"
+                            class="text-xs font-medium text-brand-600 hover:text-brand-800">
+                            Copy XML
+                        </button>
                     <?php endif; ?>
+                </div>
+                <div class="p-6 flex-grow bg-gray-50 overflow-auto max-h-[500px]">
+                    <?php if (!empty($invoice['xml_content'])): ?>
+                        <pre id="xml-content"
+                            class="text-xs text-gray-600 font-mono whitespace-pre-wrap"><?= htmlspecialchars($invoice['xml_content']) ?></pre>
+                    <?php else: ?>
+                        <div class="flex flex-col items-center justify-center h-full text-gray-400 py-12">
+                            <i data-lucide="file-dashed" class="w-12 h-12 mb-3"></i>
+                            <p>XML not generated yet.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Logs and Details -->
+            <div class="space-y-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+                        <h3 class="font-bold text-gray-900 flex items-center">
+                            <i data-lucide="shield-check" class="w-5 h-5 mr-2 text-green-600"></i> Cryptographic Details
+                        </h3>
+                    </div>
+                    <div class="p-6 text-sm">
+                        <div class="mb-4">
+                            <p class="text-gray-500 font-medium mb-1">Invoice Hash (SHA-256 Base64)</p>
+                            <div
+                                class="bg-gray-50 p-2 rounded border border-gray-200 font-mono text-xs break-all text-gray-600">
+                                <?= !empty($invoice['invoice_hash']) ? htmlspecialchars($invoice['invoice_hash']) : 'N/A' ?>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 font-medium mb-1">Cryptographic Stamp (Signature)</p>
+                            <div
+                                class="bg-gray-50 p-2 rounded border border-gray-200 font-mono text-xs break-all text-gray-600">
+                                <?= !empty($invoice['crypt_stamp']) ? htmlspecialchars($invoice['crypt_stamp']) : 'N/A' ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+                        <h3 class="font-bold text-gray-900 flex items-center">
+                            <i data-lucide="activity" class="w-5 h-5 mr-2 text-blue-600"></i> ZATCA API Response
+                        </h3>
+                    </div>
+                    <div class="p-6 text-sm bg-gray-50 max-h-[250px] overflow-auto">
+                        <?php if (!empty($invoice['zatca_response'])): ?>
+                            <pre
+                                class="font-mono text-xs text-gray-600 whitespace-pre-wrap"><?= htmlspecialchars($invoice['zatca_response']) ?></pre>
+                        <?php else: ?>
+                            <p class="text-gray-400 italic text-center py-4">No API response recorded yet.</p>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 <?php endif; ?>
 
 <script>
