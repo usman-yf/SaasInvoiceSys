@@ -2,6 +2,24 @@
 
 A beautiful, premium, production-ready invoicing dashboard built with HTML5, Tailwind CSS, Vanilla JS, and PHP/MySQL. Designed with inspiration from top-tier SaaS platforms like Stripe, Vercel, and Linear.
 
+## 📸 Screenshots
+
+| Dashboard | Invoice Preview |
+| :---: | :---: |
+| ![Dashboard](assets/img/dashboard.png) | ![Invoice](assets/img/invoice.png) |
+
+| Customers | Products & Services |
+| :---: | :---: |
+| ![Customers](assets/img/customer.png) | ![Products](assets/img/products.png) |
+
+| Reports | Settings |
+| :---: | :---: |
+| ![Reports](assets/img/report.png) | ![Settings](assets/img/settings.png) |
+
+| System Logs | Users |
+| :---: | :---: |
+| ![Logs](assets/img/logs.png) | ![Users](assets/img/users.png) |
+
 ## ✨ Premium Features
 
 - **Gorgeous Dashboard**: Fluid responsive grid, micro-animations, glassmorphism UI, and beautifully styled charts (via Chart.js).
