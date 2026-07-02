@@ -200,7 +200,7 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error') $zColor = 'red';
                     </div>
                     <?php if (!empty($invoice['qr_code_tlv'])): ?>
                     <div class="inline-block p-2 border border-gray-100 rounded-xl bg-white shadow-sm text-center">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&ecc=L&data=<?= urlencode($invoice['qr_code_tlv']) ?>" alt="ZATCA QR Code" class="w-20 h-20 mb-1 mx-auto opacity-90" crossorigin="anonymous">
+                        <div id="zatca-qr-container" class="w-20 h-20 mb-1 mx-auto flex items-center justify-center" data-qr="<?= htmlspecialchars($invoice['qr_code_tlv']) ?>"></div>
                         <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">ZATCA QR</span>
                     </div>
                     <?php endif; ?>
@@ -467,3 +467,24 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error') $zColor = 'red';
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
+
+<!-- Client-side QR Code Generation for ZATCA (to bypass URL length limits) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var qrContainer = document.getElementById("zatca-qr-container");
+        if (qrContainer) {
+            var qrData = qrContainer.getAttribute("data-qr");
+            if (qrData) {
+                new QRCode(qrContainer, {
+                    text: qrData,
+                    width: 80,
+                    height: 80,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.M
+                });
+            }
+        }
+    });
+</script>
