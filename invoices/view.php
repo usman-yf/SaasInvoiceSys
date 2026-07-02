@@ -81,19 +81,19 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error')
         <?php endif; ?>
         <a href="<?= BASE_URL ?>/payments/payments.php?invoice_id=<?= $id ?>"
             class="px-3 py-2 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors flex items-center text-sm shadow-sm">
-            <i data-lucide="credit-card" class="w-4 h-4 mr-2 text-gray-500"></i> Payments
+            <i data-lucide="credit-card" class="w-4 h-4 mr-2 text-brand-600"></i> Payments
         </a>
         <button type="button" onclick="openEmailModal(<?= $id ?>, '<?= htmlspecialchars($invoice['email']) ?>')"
             class="px-3 py-2 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors flex items-center text-sm shadow-sm">
-            <i data-lucide="mail" class="w-4 h-4 mr-2 text-gray-500"></i> Email
+            <i data-lucide="mail" class="w-4 h-4 mr-2 text-brand-600"></i> Email
         </button>
         <button onclick="window.print()"
             class="px-3 py-2 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors flex items-center text-sm shadow-sm">
-            <i data-lucide="printer" class="w-4 h-4 mr-2 text-gray-500"></i> Print
+            <i data-lucide="printer" class="w-4 h-4 mr-2 text-brand-600"></i> Print
         </button>
         <button onclick="downloadPDF()"
             class="px-3 py-2 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors flex items-center text-sm shadow-sm">
-            <i data-lucide="download" class="w-4 h-4 mr-2 text-gray-500"></i> Download PDF
+            <i data-lucide="download" class="w-4 h-4 mr-2 text-brand-600"></i> Download PDF
         </button>
         <a href="<?= BASE_URL ?>/invoices/list.php"
             class="px-3 py-2 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors flex items-center text-sm ml-2">
@@ -373,11 +373,6 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error')
                             </div>
                         </div>
                     </div>
-                </div>
-
-                    </div>
-                </div>
-
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
                         <h3 class="font-bold text-gray-900 flex items-center">
