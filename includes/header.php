@@ -275,6 +275,14 @@ $preloader_duration = get_setting($conn, 'preloader_duration', '500');
                                         $n_icon = 'user-cog'; $n_color = 'text-cyan-600'; $n_bg = 'bg-cyan-50'; 
                                     } elseif(strpos($t_lower, 'setting') !== false) { 
                                         $n_icon = 'settings'; $n_color = 'text-slate-600'; $n_bg = 'bg-slate-100'; 
+                                    } elseif(strpos($t_lower, 'zatca') !== false) { 
+                                        if (strpos($t_lower, 'cleared') !== false || strpos($t_lower, 'reported') !== false) {
+                                            $n_icon = 'shield-check'; $n_color = 'text-green-600'; $n_bg = 'bg-green-50';
+                                        } elseif (strpos($t_lower, 'rejected') !== false || strpos($t_lower, 'error') !== false) {
+                                            $n_icon = 'shield-alert'; $n_color = 'text-red-600'; $n_bg = 'bg-red-50';
+                                        } else {
+                                            $n_icon = 'file-code'; $n_color = 'text-purple-600'; $n_bg = 'bg-purple-50';
+                                        }
                                     }
                                     $notif_classes = $notif['is_read'] 
                                         ? 'opacity-75 bg-white hover:bg-gray-50 border-gray-50' 

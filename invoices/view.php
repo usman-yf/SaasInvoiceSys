@@ -326,8 +326,8 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error')
 
                 <!-- Decoded QR Data Tool -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                        <h3 class="font-bold text-gray-900 flex items-center">
+                    <div class="px-6 py-4 border-b border-brand-100 bg-brand-50 text-brand-700 flex justify-between items-center">
+                        <h3 class="text-lg font-bold flex items-center">
                             <i data-lucide="qr-code" class="w-5 h-5 mr-2 text-purple-600"></i> Decoded QR Data (TLV)
                         </h3>
                     </div>
@@ -352,8 +352,8 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error')
             <!-- Right Column: Logs and Details -->
             <div class="space-y-6">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                        <h3 class="font-bold text-gray-900 flex items-center">
+                    <div class="px-6 py-4 border-b border-brand-100 bg-brand-50 text-brand-700">
+                        <h3 class="text-lg font-bold flex items-center">
                             <i data-lucide="shield-check" class="w-5 h-5 mr-2 text-green-600"></i> Cryptographic Details
                         </h3>
                     </div>
@@ -376,8 +376,8 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error')
                 </div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                        <h3 class="font-bold text-gray-900 flex items-center">
+                    <div class="px-6 py-4 border-b border-brand-100 bg-brand-50 text-brand-700">
+                        <h3 class="text-lg font-bold flex items-center">
                             <i data-lucide="activity" class="w-5 h-5 mr-2 text-blue-600"></i> ZATCA API Response
                         </h3>
                     </div>
