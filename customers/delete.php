@@ -15,10 +15,10 @@ if($id > 0) {
     if (isset($_SESSION['user_id'])) {
         logActivity($conn, $_SESSION['user_id'], 'Customer Deleted', "Deleted customer {$name}");
     }
-    header("Location: /inv/customers/list.php?msg=" . urlencode("Customer '{$name}' successfully deleted."));
+    header("Location: " . BASE_URL . "/customers/list.php?msg=" . urlencode("Customer '{$name}' successfully deleted."));
     exit();
 }
 
-header("Location: /inv/customers/list.php");
+header("Location: " . BASE_URL . "/customers/list.php");
 exit();
 ?>

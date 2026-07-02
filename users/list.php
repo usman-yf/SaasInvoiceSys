@@ -16,7 +16,7 @@ $res = mysqli_query($conn, $sql);
         <p class="text-gray-500 mt-1">Manage system users, roles, and permissions</p>
     </div>
     <div class="flex space-x-3">
-        <a href="/inv/users/create.php" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-4 rounded-xl shadow-sm hover:shadow transition-all flex items-center">
+        <a href="<?= BASE_URL ?>/users/create.php" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-4 rounded-xl shadow-sm hover:shadow transition-all flex items-center">
             <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i> Add New User
         </a>
     </div>
@@ -110,26 +110,26 @@ $res = mysqli_query($conn, $sql);
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end space-x-2">
-                            <a href="/inv/users/edit.php?id=<?= $row['id'] ?>" class="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors" title="Edit User">
+                            <a href="<?= BASE_URL ?>/users/edit.php?id=<?= $row['id'] ?>" class="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors" title="Edit User">
                                 <i data-lucide="edit" class="w-4 h-4"></i>
                             </a>
                             
                             <?php if($row['id'] != $_SESSION['user_id']): ?>
-                                <a href="/inv/users/verify_admin.php?id=<?= $row['id'] ?>" class="p-2 text-gray-400 hover:text-<?= $row['admin_verified'] ? 'yellow' : 'green' ?>-600 hover:bg-<?= $row['admin_verified'] ? 'yellow' : 'green' ?>-50 rounded-lg transition-colors" title="<?= $row['admin_verified'] ? 'Revoke Admin Approval' : 'Grant Admin Approval' ?>">
+                                <a href="<?= BASE_URL ?>/users/verify_admin.php?id=<?= $row['id'] ?>" class="p-2 text-gray-400 hover:text-<?= $row['admin_verified'] ? 'yellow' : 'green' ?>-600 hover:bg-<?= $row['admin_verified'] ? 'yellow' : 'green' ?>-50 rounded-lg transition-colors" title="<?= $row['admin_verified'] ? 'Revoke Admin Approval' : 'Grant Admin Approval' ?>">
                                     <i data-lucide="<?= $row['admin_verified'] ? 'x-circle' : 'check-circle' ?>" class="w-4 h-4"></i>
                                 </a>
                             <?php endif; ?>
                             
                             <div id="action-email-<?= $row['id'] ?>" class="flex">
                             <?php if($row['email_verified'] == 0): ?>
-                                <a href="/inv/users/resend_verify.php?id=<?= $row['id'] ?>" class="flex items-center justify-center p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Resend Verification Email" onclick="showLoadingOverlay()">
+                                <a href="<?= BASE_URL ?>/users/resend_verify.php?id=<?= $row['id'] ?>" class="flex items-center justify-center p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Resend Verification Email" onclick="showLoadingOverlay()">
                                     <i data-lucide="send" class="w-4 h-4"></i>
                                 </a>
                             <?php endif; ?>
                             </div>
 
                             <?php if($row['id'] != $_SESSION['user_id']): ?>
-                                <button type="button" onclick="confirmDelete('/inv/users/delete.php?id=<?= $row['id'] ?>', 'Delete user <?= htmlspecialchars($row['full_name'], ENT_QUOTES) ?>?')" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete User">
+                                <button type="button" onclick="confirmDelete('<?= BASE_URL ?>/users/delete.php?id=<?= $row['id'] ?>', 'Delete user <?= htmlspecialchars($row['full_name'], ENT_QUOTES) ?>?')" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete User">
                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             <?php else: ?>
@@ -184,7 +184,7 @@ while($r = mysqli_fetch_assoc($res)) {
 let knownStatuses = <?= json_encode($initial) ?>;
 
 setInterval(() => {
-    fetch('/inv/users/ajax_status.php')
+    fetch(BASE_URL + '/users/ajax_status.php')
         .then(response => response.json())
         .then(data => {
             if(data.error) return; // Ignore on auth failure
@@ -211,7 +211,7 @@ setInterval(() => {
                             if (knownStatuses[id].email === 1) {
                                 emailActionSpan.innerHTML = '';
                             } else {
-                                emailActionSpan.innerHTML = '<a href="/inv/users/resend_verify.php?id=' + id + '" class="flex items-center justify-center p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Resend Verification Email" onclick="showLoadingOverlay()"><i data-lucide="send" class="w-4 h-4"></i></a>';
+                                emailActionSpan.innerHTML = '<a href="<?= BASE_URL ?>/users/resend_verify.php?id=' + id + '" class="flex items-center justify-center p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Resend Verification Email" onclick="showLoadingOverlay()"><i data-lucide="send" class="w-4 h-4"></i></a>';
                                 lucide.createIcons();
                             }
                         }

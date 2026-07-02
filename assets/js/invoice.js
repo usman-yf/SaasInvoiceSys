@@ -98,7 +98,7 @@ $(document).ready(function() {
         
         if (productId) {
             $.ajax({
-                url: '/inv/ajax/search_product.php',
+                url: BASE_URL + '/ajax/search_product.php',
                 type: 'GET',
                 data: {id: productId},
                 dataType: 'json',

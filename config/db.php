@@ -1,5 +1,14 @@
 <?php
 // config/db.php
+
+// Define dynamic BASE_URL
+$doc_root = rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']), '/');
+$base_dir = str_replace('\\', '/', dirname(__DIR__));
+$base_url = str_replace($doc_root, '', $base_dir);
+if (!defined('BASE_URL')) {
+    define('BASE_URL', $base_url);
+}
+
 $host = "localhost";
 $user = "root";
 $pass = "";

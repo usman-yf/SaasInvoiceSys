@@ -85,7 +85,7 @@ $balance = $invoice['total'] - $total_paid;
         <p class="text-gray-500 mt-1">Manage and record payments for this invoice</p>
     </div>
     <div>
-        <a href="/inv/invoices/view.php?id=<?= $invoice_id ?>" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-xl shadow-sm transition-all flex items-center">
+        <a href="<?= BASE_URL ?>/invoices/view.php?id=<?= $invoice_id ?>" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-xl shadow-sm transition-all flex items-center">
             <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Back to Invoice
         </a>
     </div>
@@ -118,17 +118,17 @@ $balance = $invoice['total'] - $total_paid;
                     <input type="hidden" name="action" value="pay">
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Payment Date <span class="text-red-500">*</span></label>
+                        <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Payment Date <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Please provide the payment date."></i> <span class="text-red-500">*</span></label>
                         <input type="date" name="payment_date" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block px-3 py-2.5 transition-colors outline-none shadow-sm" value="<?= date('Y-m-d') ?>" required>
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Amount Due (<?= htmlspecialchars($global_currency) ?>)</label>
+                        <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Amount Due (<?= htmlspecialchars($global_currency) ?>) <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The total for this item line."></i></label>
                         <input type="number" step="0.01" class="w-full bg-gray-100 border border-gray-200 text-gray-500 text-sm rounded-xl block p-3 shadow-sm font-medium cursor-not-allowed" value="<?= number_format($balance, 2, '.', '') ?>" disabled>
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Payment Amount (<?= htmlspecialchars($global_currency) ?>) <span class="text-red-500">*</span></label>
+                        <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Payment Amount (<?= htmlspecialchars($global_currency) ?>) <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The total for this item line."></i> <span class="text-red-500">*</span></label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <span class="text-gray-500 text-sm font-medium"><?= htmlspecialchars($global_currency) ?></span>
@@ -138,7 +138,7 @@ $balance = $invoice['total'] - $total_paid;
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Payment Method <span class="text-red-500">*</span></label>
+                        <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Payment Method <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Please provide the payment method."></i> <span class="text-red-500">*</span></label>
                         <select name="method" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" required>
                             <option value="Cash">Cash</option>
                             <option value="Bank Transfer">Bank Transfer</option>

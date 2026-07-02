@@ -15,10 +15,10 @@ if($id > 0) {
     if (isset($_SESSION['user_id'])) {
         logActivity($conn, $_SESSION['user_id'], 'Product Deleted', "Deleted product {$name}");
     }
-    header("Location: /inv/products/list.php?msg=" . urlencode("Product '{$name}' successfully deleted."));
+    header("Location: " . BASE_URL . "/products/list.php?msg=" . urlencode("Product '{$name}' successfully deleted."));
     exit();
 }
 
-header("Location: /inv/products/list.php");
+header("Location: " . BASE_URL . "/products/list.php");
 exit();
 ?>

@@ -57,7 +57,10 @@ $preloader_duration = get_setting($conn, 'preloader_duration', '500');
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/inv/assets/css/style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css">
+    <script>
+        window.BASE_URL = '<?= BASE_URL ?>';
+    </script>
     <style>
         /* Premium Select Styling */
         select {
@@ -150,42 +153,42 @@ $preloader_duration = get_setting($conn, 'preloader_duration', '500');
         <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto overflow-x-hidden">
             <p id="main-menu-label" class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 truncate">Main Menu</p>
             
-            <a href="/inv/index.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= ($current_page == 'index.php') ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
+            <a href="<?= BASE_URL ?>/index.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= ($current_page == 'index.php') ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
                 <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3 shrink-0 <?= ($current_page == 'index.php') ? 'text-brand-600' : 'text-gray-400' ?>"></i>
                 <span class="sidebar-text truncate">Dashboard</span>
             </a>
             
-            <a href="/inv/invoices/list.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/invoices/') !== false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
+            <a href="<?= BASE_URL ?>/invoices/list.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/invoices/') !== false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
                 <i data-lucide="receipt" class="w-5 h-5 mr-3 shrink-0 <?= (strpos($_SERVER['REQUEST_URI'], '/invoices/') !== false) ? 'text-brand-600' : 'text-gray-400' ?>"></i>
                 <span class="sidebar-text truncate">Invoices</span>
             </a>
             
-            <a href="/inv/customers/list.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/customers/') !== false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
+            <a href="<?= BASE_URL ?>/customers/list.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/customers/') !== false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
                 <i data-lucide="users" class="w-5 h-5 mr-3 shrink-0 <?= (strpos($_SERVER['REQUEST_URI'], '/customers/') !== false) ? 'text-brand-600' : 'text-gray-400' ?>"></i>
                 <span class="sidebar-text truncate">Customers</span>
             </a>
             
-            <a href="/inv/products/list.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/products/') !== false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
+            <a href="<?= BASE_URL ?>/products/list.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/products/') !== false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
                 <i data-lucide="package" class="w-5 h-5 mr-3 shrink-0 <?= (strpos($_SERVER['REQUEST_URI'], '/products/') !== false) ? 'text-brand-600' : 'text-gray-400' ?>"></i>
                 <span class="sidebar-text truncate">Products & Services</span>
             </a>
             
-            <a href="/inv/reports.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/reports.php') !== false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
+            <a href="<?= BASE_URL ?>/reports.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/reports.php') !== false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
                 <i data-lucide="bar-chart-2" class="w-5 h-5 mr-3 shrink-0 <?= (strpos($_SERVER['REQUEST_URI'], '/reports.php') !== false) ? 'text-brand-600' : 'text-gray-400' ?>"></i>
                 <span class="sidebar-text truncate">Reports</span>
             </a>
 
             <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
             <p id="admin-label" class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2 truncate">Administration</p>
-            <a href="/inv/users/list.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/users/') !== false && strpos($_SERVER['REQUEST_URI'], 'profile.php') === false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
+            <a href="<?= BASE_URL ?>/users/list.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/users/') !== false && strpos($_SERVER['REQUEST_URI'], 'profile.php') === false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
                 <i data-lucide="shield-check" class="w-5 h-5 mr-3 shrink-0 <?= (strpos($_SERVER['REQUEST_URI'], '/users/') !== false && strpos($_SERVER['REQUEST_URI'], 'profile.php') === false) ? 'text-brand-600' : 'text-gray-400' ?>"></i>
                 <span class="sidebar-text truncate">Users</span>
             </a>
-            <a href="/inv/settings.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/settings.php') !== false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
+            <a href="<?= BASE_URL ?>/settings.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/settings.php') !== false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
                 <i data-lucide="settings" class="w-5 h-5 mr-3 shrink-0 <?= (strpos($_SERVER['REQUEST_URI'], '/settings.php') !== false) ? 'text-brand-600' : 'text-gray-400' ?>"></i>
                 <span class="sidebar-text truncate">Settings</span>
             </a>
-            <a href="/inv/logs.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/logs.php') !== false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
+            <a href="<?= BASE_URL ?>/logs.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/logs.php') !== false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
                 <i data-lucide="activity" class="w-5 h-5 mr-3 shrink-0 <?= (strpos($_SERVER['REQUEST_URI'], '/logs.php') !== false) ? 'text-brand-600' : 'text-gray-400' ?>"></i>
                 <span class="sidebar-text truncate">System Logs</span>
             </a>
@@ -193,7 +196,7 @@ $preloader_duration = get_setting($conn, 'preloader_duration', '500');
         </nav>
         
         <div class="p-4 border-t border-gray-100">
-            <a href="/inv/auth/logout.php" class="flex items-center px-3 py-2.5 rounded-xl text-red-600 hover:bg-red-50 transition-all duration-200 logout-btn">
+            <a href="<?= BASE_URL ?>/auth/logout.php" class="flex items-center px-3 py-2.5 rounded-xl text-red-600 hover:bg-red-50 transition-all duration-200 logout-btn">
                 <i data-lucide="log-out" class="w-5 h-5 mr-3 shrink-0"></i>
                 <span class="font-medium logout-text truncate">Logout</span>
             </a>
@@ -201,9 +204,9 @@ $preloader_duration = get_setting($conn, 'preloader_duration', '500');
     </aside>
 
     <!-- Main Content wrapper -->
-    <div class="flex-1 flex flex-col min-w-0 bg-gray-50/50">
+    <div class="flex-1 flex flex-col min-w-0 bg-gray-50/50 overflow-y-auto relative">
         <!-- Header -->
-        <header class="h-16 bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-30 flex items-center justify-between px-6 sm:px-8">
+        <header class="h-16 shrink-0 bg-white/30 backdrop-blur-md border-b border-brand-100/50 shadow-md shadow-brand-500/5 sticky top-0 z-30 flex items-center justify-between px-6 sm:px-8 transition-all">
             <div class="flex items-center">
                 <!-- Sidebar Toggle Desktop -->
                 <button id="desktopSidebarToggle" class="hidden md:flex mr-4 w-10 h-10 rounded-full items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors focus:outline-none">
@@ -273,8 +276,11 @@ $preloader_duration = get_setting($conn, 'preloader_duration', '500');
                                     } elseif(strpos($t_lower, 'setting') !== false) { 
                                         $n_icon = 'settings'; $n_color = 'text-slate-600'; $n_bg = 'bg-slate-100'; 
                                     }
+                                    $notif_classes = $notif['is_read'] 
+                                        ? 'opacity-75 bg-white hover:bg-gray-50 border-gray-50' 
+                                        : 'unread-notif bg-brand-50 shadow-sm hover:bg-brand-100 border-brand-100';
                             ?>
-                            <div id="notif-<?= $notif['id'] ?>" onclick="markSingleNotificationRead(<?= $notif['id'] ?>)" class="cursor-pointer p-4 border-b border-gray-50 hover:bg-gray-50/80 transition-colors flex items-start space-x-3 <?= $notif['is_read'] ? 'opacity-75' : 'bg-brand-50/20' ?>">
+                            <div id="notif-<?= $notif['id'] ?>" onclick="markSingleNotificationRead(<?= $notif['id'] ?>)" class="cursor-pointer p-4 border-b transition-colors flex items-start space-x-3 <?= $notif_classes ?>">
                                 <div class="mt-0.5 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center <?= $n_bg ?>">
                                     <i data-lucide="<?= $n_icon ?>" class="w-4 h-4 <?= $n_color ?>"></i>
                                 </div>
@@ -310,11 +316,11 @@ $preloader_duration = get_setting($conn, 'preloader_duration', '500');
                     
                     <!-- Profile Dropdown -->
                     <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-float border border-gray-100 z-50 overflow-hidden py-1">
-                        <a href="/inv/users/profile.php" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                        <a href="<?= BASE_URL ?>/users/profile.php" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                             <i data-lucide="user" class="w-4 h-4 mr-3 text-gray-400"></i> Profile Settings
                         </a>
                         <div class="h-px bg-gray-100 my-1"></div>
-                        <a href="/inv/auth/logout.php" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                        <a href="<?= BASE_URL ?>/auth/logout.php" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
                             <i data-lucide="log-out" class="w-4 h-4 mr-3 text-red-400"></i> Logout
                         </a>
                     </div>
@@ -323,5 +329,5 @@ $preloader_duration = get_setting($conn, 'preloader_duration', '500');
         </header>
 
         <!-- Main Page Content -->
-        <main class="flex-1 p-6 sm:p-8 overflow-y-auto">
+        <main class="flex-1 p-6 sm:p-8">
 <?php endif; ?>

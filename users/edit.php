@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $_SESSION['role'] = $role;
                     }
                     logActivity($conn, $_SESSION['user_id'], 'User Updated', "Updated user account details for $full_name.");
-                    redirect('/inv/users/list.php?msg=' . urlencode("User '{$full_name}' successfully updated."));
+                    redirect(BASE_URL . '/users/list.php?msg=' . urlencode("User '{$full_name}' successfully updated."));
                 } else {
                     $error = "Database error: " . mysqli_error($conn);
                 }
@@ -79,7 +79,7 @@ require_once __DIR__ . '/../includes/header.php';
         <p class="text-gray-500 mt-1">Update system user account details</p>
     </div>
     <div class="flex space-x-3">
-        <a href="/inv/users/list.php" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-xl shadow-sm transition-all flex items-center">
+        <a href="<?= BASE_URL ?>/users/list.php" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-xl shadow-sm transition-all flex items-center">
             <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Back to Users
         </a>
     </div>
@@ -94,18 +94,18 @@ require_once __DIR__ . '/../includes/header.php';
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Full Name <span class="text-red-500">*</span></label>
+                    <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Full Name <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The complete name of the user."></i> <span class="text-red-500">*</span></label>
                     <input type="text" name="full_name" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($user['full_name']) ?>" required autocomplete="new-password" pattern="^[A-Za-z\s]+$" title="Only alphabet characters allowed">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Email <span class="text-red-500">*</span></label>
+                    <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Email <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The email address for communication and notifications."></i> <span class="text-red-500">*</span></label>
                     <input type="email" name="email" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($user['email'] ?? '') ?>" required autocomplete="new-password">
                 </div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number <span class="text-red-500">*</span></label>
+                    <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Phone Number <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="A contact number for this entity."></i> <span class="text-red-500">*</span></label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i data-lucide="phone" class="w-4 h-4 text-gray-400"></i>
@@ -114,7 +114,7 @@ require_once __DIR__ . '/../includes/header.php';
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Role <span class="text-red-500">*</span></label>
+                    <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Role <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The permission level assigned to this user."></i> <span class="text-red-500">*</span></label>
                     <select name="role" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" required>
                         <option value="staff" <?= strtolower($user['role']) == 'staff' ? 'selected' : '' ?>>Staff</option>
                         <option value="admin" <?= strtolower($user['role']) == 'admin' ? 'selected' : '' ?>>Admin</option>
@@ -123,7 +123,7 @@ require_once __DIR__ . '/../includes/header.php';
             </div>
 
             <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">New Password (Leave blank to keep current)</label>
+                <label class="flex items-center text-sm font-medium text-gray-700 mb-2">New Password (Leave blank to keep current) <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="A strong, secure password for account access."></i></label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <i data-lucide="lock" class="w-4 h-4 text-gray-400"></i>

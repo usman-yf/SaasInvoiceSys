@@ -11,7 +11,7 @@ checkAuth();
 $id = isset($_POST['id']) ? (int) $_POST['id'] : (isset($_GET['id']) ? (int) $_GET['id'] : 0);
 
 if ($id <= 0) {
-    redirect('/inv/invoices/list.php');
+    redirect(BASE_URL . '/invoices/list.php');
 }
 
 $inv_sql = "SELECT i.*, c.name, c.email, c.phone, c.address 
@@ -19,7 +19,7 @@ $inv_sql = "SELECT i.*, c.name, c.email, c.phone, c.address
 $res = mysqli_query($conn, $inv_sql);
 
 if (mysqli_num_rows($res) == 0) {
-    redirect('/inv/invoices/list.php');
+    redirect(BASE_URL . '/invoices/list.php');
 }
 
 $invoice = mysqli_fetch_assoc($res);
@@ -28,7 +28,7 @@ $invoice = mysqli_fetch_assoc($res);
 $to = isset($_POST['email_to']) && !empty($_POST['email_to']) ? sanitize($conn, $_POST['email_to']) : $invoice['email'];
 
 if (empty($to)) {
-    redirect('/inv/invoices/view.php?id=' . $id . '&msg=failed');
+    redirect(BASE_URL . '/invoices/view.php?id=' . $id . '&msg=failed');
 }
 
 $subject = 'Invoice ' . $invoice['invoice_no'] . ' from InvSys Company';
@@ -138,7 +138,7 @@ while ($item = mysqli_fetch_assoc($items_res)) {
 }
 
 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-$veri_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . "/inv/verify.php?token=" . urlencode($invoice['token']) . "&inv=" . urlencode($invoice['invoice_no']);
+$veri_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . BASE_URL . "/verify.php?token=" . urlencode($invoice['token']) . "&inv=" . urlencode($invoice['invoice_no']);
 $qr_api_url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&ecc=L&data=" . urlencode($veri_url);
 
 $body .= "
@@ -228,7 +228,7 @@ try {
     $mail->AltBody = strip_tags(str_replace(['<br>', '</div>'], "\n", $body));
 
     $mail->send();
-    $redir = isset($_POST['redirect_to']) ? $_POST['redirect_to'] : '/inv/invoices/view.php?id=' . $id;
+    $redir = isset($_POST['redirect_to']) ? $_POST['redirect_to'] : BASE_URL . '/invoices/view.php?id=' . $id;
     $redir_char = strpos($redir, '?') !== false ? '&' : '?';
     
     if (isset($_SESSION['user_id'])) {
@@ -238,7 +238,7 @@ try {
     redirect($redir . $redir_char . 'msg=emailed&to=' . urlencode($to));
 } catch (\Exception $e) {
     // Optionally log error $mail->ErrorInfo
-    $redir = isset($_POST['redirect_to']) ? $_POST['redirect_to'] : '/inv/invoices/view.php?id=' . $id;
+    $redir = isset($_POST['redirect_to']) ? $_POST['redirect_to'] : BASE_URL . '/invoices/view.php?id=' . $id;
     $redir_char = strpos($redir, '?') !== false ? '&' : '?';
     redirect($redir . $redir_char . 'msg=failed&to=' . urlencode($to));
 }

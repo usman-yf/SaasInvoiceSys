@@ -34,7 +34,7 @@ function sendVerificationEmail($to, $name, $token, $expire_mins = 1440)
 
         $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
         $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
-        $verifyLink = "$protocol://$host/inv/auth/verify.php?token=$token";
+        $verifyLink = "$protocol://$host" . BASE_URL . "/auth/verify.php?token=$token";
 
         // Calculate hours/mins for display
         $expire_text = ($expire_mins >= 60) ? floor($expire_mins / 60) . ' hours' : $expire_mins . ' minutes';

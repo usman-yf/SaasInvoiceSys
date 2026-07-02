@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (isset($_SESSION['user_id'])) {
                 logActivity($conn, $_SESSION['user_id'], 'Product Updated', "Updated product {$name}");
             }
-            redirect('/inv/products/list.php?msg=' . urlencode("Product '{$name}' successfully updated."));
+            redirect(BASE_URL . '/products/list.php?msg=' . urlencode("Product '{$name}' successfully updated."));
         } else {
             $error = "Error updating product.";
         }
@@ -51,7 +51,7 @@ require_once __DIR__ . '/../includes/header.php';
         <p class="text-gray-500 mt-1">Update product or service details</p>
     </div>
     <div class="flex space-x-3">
-        <a href="/inv/products/list.php" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-xl shadow-sm transition-all flex items-center">
+        <a href="<?= BASE_URL ?>/products/list.php" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-xl shadow-sm transition-all flex items-center">
             <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Back to List
         </a>
     </div>
@@ -66,18 +66,18 @@ require_once __DIR__ . '/../includes/header.php';
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Product Name <span class="text-red-500">*</span></label>
+                    <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Product Name <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="A clear, descriptive name for what you're selling."></i> <span class="text-red-500">*</span></label>
                     <input type="text" name="name" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($row['name']) ?>" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">SKU (Stock Keeping Unit)</label>
+                    <label class="flex items-center text-sm font-medium text-gray-700 mb-2">SKU (Stock Keeping Unit) <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Stock Keeping Unit, a unique identifier for this item."></i></label>
                     <input type="text" name="sku" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm font-mono placeholder-gray-400" value="<?= htmlspecialchars($row['sku']) ?>">
                 </div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Price (<?= htmlspecialchars($global_currency) ?>) <span class="text-red-500">*</span></label>
+                    <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Price (<?= htmlspecialchars($global_currency) ?>) <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The base selling price before any taxes."></i> <span class="text-red-500">*</span></label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <span class="text-gray-500 text-sm"><?= htmlspecialchars($global_currency) ?></span>
@@ -86,7 +86,7 @@ require_once __DIR__ . '/../includes/header.php';
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Tax Rate (%)</label>
+                    <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Tax Rate (%) <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The percentage of tax applicable to this item."></i></label>
                     <div class="relative">
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                             <i data-lucide="percent" class="w-4 h-4 text-gray-400"></i>

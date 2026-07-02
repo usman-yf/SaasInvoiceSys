@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (isset($_SESSION['user_id'])) {
                 logActivity($conn, $_SESSION['user_id'], 'Invoice Created', "Created invoice {$invoice_no} with total {$global_currency} " . number_format($total, 2));
             }
-            redirect('/inv/invoices/list.php?msg=' . urlencode("Invoice '{$invoice_no}' successfully created."));
+            redirect(BASE_URL . '/invoices/list.php?msg=' . urlencode("Invoice '{$invoice_no}' successfully created."));
         } catch (Exception $e) {
             mysqli_rollback($conn);
             $error = "Failed to create invoice: " . $e->getMessage();
@@ -80,7 +80,7 @@ require_once __DIR__ . '/../includes/header.php';
         <p class="text-gray-500 mt-1">Draft a new invoice for your customer</p>
     </div>
     <div class="flex space-x-3">
-        <a href="/inv/invoices/list.php" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-xl shadow-sm transition-all flex items-center">
+        <a href="<?= BASE_URL ?>/invoices/list.php" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-xl shadow-sm transition-all flex items-center">
             <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Back to List
         </a>
     </div>
@@ -92,7 +92,7 @@ require_once __DIR__ . '/../includes/header.php';
             <h3 class="text-lg font-bold text-gray-900 mb-6">Invoice Details</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Customer <span class="text-red-500">*</span></label>
+                    <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Customer <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The customer this invoice belongs to."></i> <span class="text-red-500">*</span></label>
                     <select name="customer_id" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" required>
                         <option value="">Select Customer...</option>
                         <?php
@@ -104,11 +104,11 @@ require_once __DIR__ . '/../includes/header.php';
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Date <span class="text-red-500">*</span></label>
+                    <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Date <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Please provide the date."></i> <span class="text-red-500">*</span></label>
                     <input type="date" name="date" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= date('Y-m-d') ?>" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Invoice Number</label>
+                    <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Invoice Number <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="A unique identifier for this invoice."></i></label>
                     <input type="text" class="w-full bg-gray-100 border border-gray-200 text-gray-500 text-sm rounded-xl block p-3 shadow-sm cursor-not-allowed" value="<?= generateInvoiceNo($conn) ?>" readonly disabled>
                     <p class="mt-1 text-xs text-gray-500">Auto-generated identifier</p>
                 </div>
@@ -159,7 +159,7 @@ require_once __DIR__ . '/../includes/header.php';
             <!-- Totals -->
             <div class="flex flex-col md:flex-row justify-between items-start border-t border-gray-100 pt-8">
                 <div class="w-full md:w-1/2 mb-6 md:mb-0 pr-0 md:pr-8">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Notes or Terms</label>
+                    <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Notes or Terms <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Additional information or payment instructions."></i></label>
                     <textarea class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none" rows="4" placeholder="Enter any notes for the customer..."></textarea>
                 </div>
                 

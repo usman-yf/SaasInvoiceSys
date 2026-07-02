@@ -14,6 +14,6 @@ if (isset($_COOKIE['remember_token'])) {
 
 session_unset();
 session_destroy();
-header("Location: /inv/auth/login.php?msg=Logged+out+successfully");
+header("Location: " . BASE_URL . "/auth/login.php?msg=Logged+out+successfully");
 exit();
 ?>

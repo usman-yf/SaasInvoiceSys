@@ -241,7 +241,7 @@ switch($toast_position_pref) {
 </script>
 
 <!-- Custom Scripts -->
-<script src="/inv/assets/js/invoice.js"></script>
+<script src="<?= BASE_URL ?>/assets/js/invoice.js"></script>
 
 <!-- Premium Form Validation Logic -->
 <script>
@@ -480,7 +480,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(e.key === 'Enter') {
                 const term = this.value;
                 if(term) {
-                    window.location.href = `/inv/index.php?search=${encodeURIComponent(term)}`;
+                    window.location.href = `/index.php?search=${encodeURIComponent(term)}`;
                 }
             }
         });
@@ -575,7 +575,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function markNotificationsRead() {
-    fetch('/inv/ajax/notifications_ajax.php', {
+    fetch(window.BASE_URL + '/ajax/notifications_ajax.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'action=mark_read'
@@ -589,16 +589,16 @@ function markNotificationsRead() {
             if(badge) badge.remove();
         }
         // Update styling of all unread items in dropdown
-        const items = document.querySelectorAll('#notificationDropdown .bg-brand-50\\/30');
+        const items = document.querySelectorAll('#notificationDropdown .unread-notif');
         items.forEach(item => {
-            item.classList.remove('bg-brand-50/30');
-            item.classList.add('opacity-70');
+            item.classList.remove('unread-notif', 'bg-brand-50', 'shadow-sm', 'hover:bg-brand-100', 'border-brand-100');
+            item.classList.add('opacity-75', 'bg-white', 'hover:bg-gray-50', 'border-gray-50');
         });
     });
 }
 
 function markSingleNotificationRead(id) {
-    fetch('/inv/ajax/notifications_ajax.php', {
+    fetch(window.BASE_URL + '/ajax/notifications_ajax.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'action=mark_read&id=' + id
@@ -606,13 +606,13 @@ function markSingleNotificationRead(id) {
     .then(response => response.text())
     .then(data => {
         const item = document.getElementById('notif-' + id);
-        if(item) {
-            item.classList.remove('bg-brand-50/30');
-            item.classList.add('opacity-70');
+        if(item && item.classList.contains('unread-notif')) {
+            item.classList.remove('unread-notif', 'bg-brand-50', 'shadow-sm', 'hover:bg-brand-100', 'border-brand-100');
+            item.classList.add('opacity-75', 'bg-white', 'hover:bg-gray-50', 'border-gray-50');
         }
         
         // Check if there are any unread left
-        const unreadItems = document.querySelectorAll('#notificationDropdown .bg-brand-50\\/30');
+        const unreadItems = document.querySelectorAll('#notificationDropdown .unread-notif');
         if (unreadItems.length === 0) {
             const toggle = document.getElementById('notificationToggle');
             if(toggle) {

@@ -88,7 +88,7 @@ if ($status == 'error') {
                 <p class="text-gray-500 text-lg mb-8"><?= htmlspecialchars($message) ?></p>
                 
                 <div>
-                    <a href="/inv/auth/login.php" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-medium text-white bg-brand-600 hover:bg-brand-700 shadow-sm hover:shadow transition-all group">
+                    <a href="<?= BASE_URL ?>/auth/login.php" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-medium text-white bg-brand-600 hover:bg-brand-700 shadow-sm hover:shadow transition-all group">
                         <i data-lucide="log-in" class="w-5 h-5 mr-2"></i> Go to Login
                     </a>
                 </div>

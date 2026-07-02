@@ -11,7 +11,7 @@ $res = mysqli_query($conn, "SELECT * FROM customers ORDER BY id DESC");
         <p class="text-gray-500 mt-1">Manage your client list and details</p>
     </div>
     <div class="flex space-x-3">
-        <a href="/inv/customers/add.php" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-4 rounded-xl shadow-sm hover:shadow transition-all flex items-center">
+        <a href="<?= BASE_URL ?>/customers/add.php" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-4 rounded-xl shadow-sm hover:shadow transition-all flex items-center">
             <i data-lucide="plus" class="w-4 h-4 mr-2"></i> Add Customer
         </a>
     </div>
@@ -73,10 +73,10 @@ $res = mysqli_query($conn, "SELECT * FROM customers ORDER BY id DESC");
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <a href="/inv/customers/edit.php?id=<?= $row['id'] ?>" class="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors" title="Edit">
+                            <a href="<?= BASE_URL ?>/customers/edit.php?id=<?= $row['id'] ?>" class="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors" title="Edit">
                                 <i data-lucide="edit" class="w-4 h-4"></i>
                             </a>
-                            <button type="button" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete" onclick="confirmDelete('/inv/customers/delete.php?id=<?= $row['id'] ?>', 'Delete customer <?= htmlspecialchars($row['name'], ENT_QUOTES) ?>?')">
+                            <button type="button" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete" onclick="confirmDelete('<?= BASE_URL ?>/customers/delete.php?id=<?= $row['id'] ?>', 'Delete customer <?= htmlspecialchars($row['name'], ENT_QUOTES) ?>?')">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -90,7 +90,7 @@ $res = mysqli_query($conn, "SELECT * FROM customers ORDER BY id DESC");
                                 <i data-lucide="users" class="w-6 h-6 text-gray-400"></i>
                             </div>
                             <p>No customers found.</p>
-                            <a href="/inv/customers/add.php" class="text-brand-600 font-medium hover:underline mt-2">Add your first customer</a>
+                            <a href="<?= BASE_URL ?>/customers/add.php" class="text-brand-600 font-medium hover:underline mt-2">Add your first customer</a>
                         </div>
                     </td></tr>
                 <?php endif; ?>

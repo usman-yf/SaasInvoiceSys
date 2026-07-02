@@ -16,10 +16,10 @@ if($id > 0) {
     if (isset($_SESSION['user_id'])) {
         logActivity($conn, $_SESSION['user_id'], 'Invoice Deleted', "Deleted invoice {$invoice_no}");
     }
-    header("Location: /inv/invoices/list.php?msg=" . urlencode("Invoice '{$invoice_no}' successfully deleted."));
+    header("Location: " . BASE_URL . "/invoices/list.php?msg=" . urlencode("Invoice '{$invoice_no}' successfully deleted."));
     exit();
 }
 
-header("Location: /inv/invoices/list.php");
+header("Location: " . BASE_URL . "/invoices/list.php");
 exit();
 ?>

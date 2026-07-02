@@ -33,11 +33,11 @@ $company_address = get_setting($conn, 'company_address', "123 Business Street\nL
     </div>
     <div class="flex flex-wrap items-center gap-2">
         <?php if ($invoice['status'] == 'Unpaid'): ?>
-            <a href="/inv/invoices/edit.php?id=<?= $id ?>" class="px-3 py-2 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors flex items-center text-sm shadow-sm">
+            <a href="<?= BASE_URL ?>/invoices/edit.php?id=<?= $id ?>" class="px-3 py-2 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors flex items-center text-sm shadow-sm">
                 <i data-lucide="edit" class="w-4 h-4 mr-2 text-gray-500"></i> Edit
             </a>
         <?php endif; ?>
-        <a href="/inv/payments/payments.php?invoice_id=<?= $id ?>" class="px-3 py-2 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors flex items-center text-sm shadow-sm">
+        <a href="<?= BASE_URL ?>/payments/payments.php?invoice_id=<?= $id ?>" class="px-3 py-2 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors flex items-center text-sm shadow-sm">
             <i data-lucide="credit-card" class="w-4 h-4 mr-2 text-gray-500"></i> Payments
         </a>
         <button type="button" onclick="openEmailModal(<?= $id ?>, '<?= htmlspecialchars($invoice['email']) ?>')" class="px-3 py-2 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors flex items-center text-sm shadow-sm">
@@ -49,7 +49,7 @@ $company_address = get_setting($conn, 'company_address', "123 Business Street\nL
         <button onclick="downloadPDF()" class="px-3 py-2 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors flex items-center text-sm shadow-sm">
             <i data-lucide="download" class="w-4 h-4 mr-2 text-gray-500"></i> Download PDF
         </button>
-        <a href="/inv/invoices/list.php" class="px-3 py-2 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors flex items-center text-sm ml-2">
+        <a href="<?= BASE_URL ?>/invoices/list.php" class="px-3 py-2 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors flex items-center text-sm ml-2">
             <i data-lucide="x" class="w-4 h-4 mr-2"></i> Close
         </a>
     </div>
@@ -145,7 +145,7 @@ $company_address = get_setting($conn, 'company_address', "123 Business Street\nL
                 <p class="text-sm text-gray-500 mb-6 max-w-sm">Thank you for your business. Please remit payment within 14 days of receiving this invoice.</p>
                 <?php
                 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-                $veri_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . "/inv/verify.php?token=" . urlencode($invoice['token']) . "&inv=" . urlencode($invoice['invoice_no']);
+                $veri_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . BASE_URL . "/verify.php?token=" . urlencode($invoice['token']) . "&inv=" . urlencode($invoice['invoice_no']);
                 $qr_api_url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&ecc=L&data=" . urlencode($veri_url);
                 ?>
                 <div class="inline-block p-2 border border-gray-100 rounded-xl bg-white shadow-sm text-center">
@@ -228,7 +228,7 @@ $company_address = get_setting($conn, 'company_address', "123 Business Street\nL
             setTimeout(function () {
                 downloadPDF();
                 setTimeout(function () {
-                    window.location.href = '/inv/invoices/list.php';
+                    window.location.href = BASE_URL + '/invoices/list.php';
                 }, 1000);
             }, 1000); 
         });
@@ -249,13 +249,13 @@ $company_address = get_setting($conn, 'company_address', "123 Business Street\nL
                 </button>
             </div>
             
-            <form action="/inv/invoices/email.php" method="POST" onsubmit="showLoadingOverlay()">
+            <form action="<?= BASE_URL ?>/invoices/email.php" method="POST" onsubmit="showLoadingOverlay()">
                 <div class="p-6">
                     <input type="hidden" name="id" id="modal_invoice_id" value="<?= $id ?>">
-                    <input type="hidden" name="redirect_to" value="/inv/invoices/view.php?id=<?= $id ?>">
+                    <input type="hidden" name="redirect_to" value="<?= BASE_URL ?>/invoices/view.php?id=<?= $id ?>">
                     
                     <div class="mb-4">
-                        <label for="modal_email_to" class="block text-sm font-medium text-gray-700 mb-2">Recipient Email Address <span class="text-red-500">*</span></label>
+                        <label for="modal_email_to" class="flex items-center text-sm font-medium text-gray-700 mb-2">Recipient Email Address <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The email address for communication and notifications."></i> <span class="text-red-500">*</span></label>
                         <input type="email" id="modal_email_to" name="email_to" value="<?= htmlspecialchars($invoice['email']) ?>" required 
                                class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none">
                         <p class="mt-2 text-xs text-gray-500">The invoice PDF will be attached to this email.</p>

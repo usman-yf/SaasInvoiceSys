@@ -12,7 +12,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if ($id == $_SESSION['user_id']) {
-    redirect('/inv/users/list.php?err=' . urlencode('Cannot delete your own account.'));
+    redirect(BASE_URL . '/users/list.php?err=' . urlencode('Cannot delete your own account.'));
 }
 
 $check = mysqli_query($conn, "SELECT role, full_name FROM users WHERE id = $id");
@@ -22,15 +22,15 @@ if(mysqli_num_rows($check) > 0) {
         $adminCheck = mysqli_query($conn, "SELECT COUNT(*) as count FROM users WHERE role='admin'");
         $adminCount = mysqli_fetch_assoc($adminCheck)['count'];
         if($adminCount <= 1) {
-            redirect('/inv/users/list.php?err=' . urlencode('Cannot delete the last administrator account.'));
+            redirect(BASE_URL . '/users/list.php?err=' . urlencode('Cannot delete the last administrator account.'));
         }
     }
     
     $full_name = $user['full_name'];
     mysqli_query($conn, "DELETE FROM users WHERE id = $id");
     logActivity($conn, $_SESSION['user_id'], 'User Deleted', "Deleted user account for $full_name.");
-    redirect('/inv/users/list.php?msg=' . urlencode("User '{$full_name}' successfully deleted."));
+    redirect(BASE_URL . '/users/list.php?msg=' . urlencode("User '{$full_name}' successfully deleted."));
 } else {
-    redirect('/inv/users/list.php');
+    redirect(BASE_URL . '/users/list.php');
 }
 ?>

@@ -29,6 +29,56 @@ if($row = mysqli_fetch_assoc($res)) $stats['unpaid_invoices'] = $row['c'];
 $res = mysqli_query($conn, "SELECT SUM(GREATEST(0, i.total - COALESCE((SELECT SUM(amount) FROM payments p WHERE p.invoice_id = i.id), 0))) as outstanding FROM invoices i");
 $stats['total_remaining'] = mysqli_fetch_assoc($res)['outstanding'] ?? 0;
 
+// MoM Growth Logic
+$current_month = date('Y-m');
+$prev_month = date('Y-m', strtotime('-1 month'));
+
+// Revenue MoM
+$rev_curr_sql = mysqli_query($conn, "SELECT SUM(total) as s FROM invoices WHERE DATE_FORMAT(date, '%Y-%m') = '$current_month' AND status != 'Unpaid'");
+$rev_curr = mysqli_fetch_assoc($rev_curr_sql)['s'] ?? 0;
+$rev_prev_sql = mysqli_query($conn, "SELECT SUM(total) as s FROM invoices WHERE DATE_FORMAT(date, '%Y-%m') = '$prev_month' AND status != 'Unpaid'");
+$rev_prev = mysqli_fetch_assoc($rev_prev_sql)['s'] ?? 0;
+$rev_growth = $rev_prev > 0 ? (($rev_curr - $rev_prev) / $rev_prev) * 100 : ($rev_curr > 0 ? 100 : 0);
+
+// Invoices MoM
+$inv_curr_sql = mysqli_query($conn, "SELECT COUNT(*) as c FROM invoices WHERE DATE_FORMAT(date, '%Y-%m') = '$current_month'");
+$inv_curr = mysqli_fetch_assoc($inv_curr_sql)['c'] ?? 0;
+$inv_prev_sql = mysqli_query($conn, "SELECT COUNT(*) as c FROM invoices WHERE DATE_FORMAT(date, '%Y-%m') = '$prev_month'");
+$inv_prev = mysqli_fetch_assoc($inv_prev_sql)['c'] ?? 0;
+$inv_growth = $inv_prev > 0 ? (($inv_curr - $inv_prev) / $inv_prev) * 100 : ($inv_curr > 0 ? 100 : 0);
+
+// Overdue Invoices Alert (Assumes unpaid and older than 30 days)
+$overdue_sql = mysqli_query($conn, "SELECT COUNT(*) as cnt, SUM(total) as sum FROM invoices WHERE status = 'Unpaid' AND date < DATE_SUB(CURDATE(), INTERVAL 30 DAY)");
+$overdue_data = $overdue_sql ? mysqli_fetch_assoc($overdue_sql) : null;
+$overdue_count = (int)($overdue_data['cnt'] ?? 0);
+$overdue_amount = (float)($overdue_data['sum'] ?? 0);
+
+// Activity Stream
+$activities = mysqli_query($conn, "SELECT * FROM notifications ORDER BY created_at DESC LIMIT 6");
+
+// Top Customers
+$top_customers = mysqli_query($conn, "
+    SELECT c.name, c.email, SUM(i.total) as total_revenue
+    FROM invoices i 
+    JOIN customers c ON i.customer_id = c.id 
+    WHERE i.status != 'Unpaid'
+    GROUP BY c.id 
+    ORDER BY total_revenue DESC 
+    LIMIT 4
+");
+
+// Top Products
+$top_products = mysqli_query($conn, "
+    SELECT p.name, SUM(ii.total) as total_revenue
+    FROM invoice_items ii
+    JOIN products p ON ii.product_id = p.id
+    JOIN invoices i ON ii.invoice_id = i.id
+    WHERE i.status != 'Unpaid'
+    GROUP BY p.id
+    ORDER BY total_revenue DESC
+    LIMIT 4
+");
+
 // Recent invoices
 $recent_invoices = mysqli_query($conn, "
     SELECT i.*, c.name as customer_name,
@@ -77,6 +127,13 @@ while($crow = mysqli_fetch_assoc($cres)) {
     animation: chartPopIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     opacity: 0;
 }
+@keyframes floatBadge {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+.animate-float {
+    animation: floatBadge 3s ease-in-out infinite;
+}
 </style>
 
 <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between space-y-4 md:space-y-0">
@@ -85,74 +142,124 @@ while($crow = mysqli_fetch_assoc($cres)) {
         <p class="text-gray-500 mt-1">Welcome back, <?= htmlspecialchars($_SESSION['username'] ?? 'User') ?>! Here's what's happening with your business today.</p>
     </div>
     <div class="flex space-x-3">
-        <a href="/inv/invoices/create.php" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-4 rounded-xl shadow-sm hover:shadow transition-all flex items-center">
+        <a href="<?= BASE_URL ?>/invoices/create.php" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-4 rounded-xl shadow-sm hover:shadow transition-all flex items-center">
             <i data-lucide="plus" class="w-4 h-4 mr-2"></i> New Invoice
         </a>
     </div>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-    <!-- Stat Cards -->
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between group hover:shadow-md transition-shadow">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 mb-8">
+    <!-- Total Revenue -->
+    <div class="relative bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col group hover:shadow-md hover:border-brand-200 transition-all">
         <div class="flex justify-between items-start mb-4">
-            <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600 group-hover:scale-110 transition-transform">
-                <i data-lucide="banknote" class="w-5 h-5"></i>
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600 group-hover:scale-110 transition-transform shrink-0">
+                    <i data-lucide="banknote" class="w-5 h-5"></i>
+                </div>
+                <p class="text-sm font-bold text-gray-500 ml-3">Total Revenue</p>
+            </div>
+            <div class="absolute -top-3 right-4 flex items-center text-[10px] sm:text-xs font-bold <?= $rev_growth >= 0 ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100' ?> px-2 py-1 rounded-full shrink-0 shadow-sm animate-float border border-white" title="vs Last Month">
+                <i data-lucide="<?= $rev_growth >= 0 ? 'trending-up' : 'trending-down' ?>" class="w-3 h-3 mr-1"></i>
+                <?= number_format(abs($rev_growth), 1) ?>%
             </div>
         </div>
-        <div class="min-w-0">
-            <p class="text-sm font-medium text-gray-500 mb-1">Total Revenue</p>
-            <h2 class="text-2xl font-bold text-gray-900 truncate" title="<?= htmlspecialchars($global_currency) ?> <?= number_format($stats['total_revenue'], 2) ?>"><?= htmlspecialchars($global_currency) ?> <?= number_format($stats['total_revenue'], 2) ?></h2>
+        <div class="min-w-0 mt-auto">
+            <h2 class="text-2xl xl:text-3xl font-extrabold text-gray-900 tracking-tight truncate" title="<?= htmlspecialchars($global_currency) ?> <?= number_format($stats['total_revenue'], 2) ?>">
+                <span class="text-sm font-semibold text-gray-400 mr-1"><?= htmlspecialchars($global_currency) ?></span><?= number_format($stats['total_revenue'], 2) ?>
+            </h2>
         </div>
     </div>
     
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between group hover:shadow-md transition-shadow">
+    <!-- Total Invoices -->
+    <div class="relative bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col group hover:shadow-md hover:border-brand-200 transition-all">
         <div class="flex justify-between items-start mb-4">
-            <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
-                <i data-lucide="receipt" class="w-5 h-5"></i>
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform shrink-0">
+                    <i data-lucide="receipt" class="w-5 h-5"></i>
+                </div>
+                <p class="text-sm font-bold text-gray-500 ml-3">Total Invoices</p>
+            </div>
+            <div class="absolute -top-3 right-4 flex items-center text-[10px] sm:text-xs font-bold <?= $inv_growth >= 0 ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100' ?> px-2 py-1 rounded-full shrink-0 shadow-sm animate-float border border-white" title="vs Last Month">
+                <i data-lucide="<?= $inv_growth >= 0 ? 'trending-up' : 'trending-down' ?>" class="w-3 h-3 mr-1"></i>
+                <?= number_format(abs($inv_growth), 1) ?>%
             </div>
         </div>
-        <div class="min-w-0">
-            <p class="text-sm font-medium text-gray-500 mb-1">Total Invoices</p>
-            <h2 class="text-2xl font-bold text-gray-900 truncate" title="<?= $stats['total_invoices'] ?>"><?= $stats['total_invoices'] ?></h2>
+        <div class="min-w-0 mt-auto">
+            <h2 class="text-2xl xl:text-3xl font-extrabold text-gray-900 tracking-tight truncate" title="<?= $stats['total_invoices'] ?>">
+                <?= $stats['total_invoices'] ?>
+            </h2>
         </div>
     </div>
     
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between group hover:shadow-md transition-shadow">
+    <!-- Unpaid Invoices -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col group hover:shadow-md hover:border-brand-200 transition-all">
         <div class="flex justify-between items-start mb-4">
-            <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500 group-hover:scale-110 transition-transform">
-                <i data-lucide="clock" class="w-5 h-5"></i>
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500 group-hover:scale-110 transition-transform shrink-0">
+                    <i data-lucide="clock" class="w-5 h-5"></i>
+                </div>
+                <p class="text-sm font-bold text-gray-500 ml-3">Unpaid</p>
             </div>
         </div>
-        <div class="min-w-0">
-            <p class="text-sm font-medium text-gray-500 mb-1">Unpaid Invoices</p>
-            <h2 class="text-2xl font-bold text-gray-900 truncate" title="<?= $stats['unpaid_invoices'] ?>"><?= $stats['unpaid_invoices'] ?></h2>
+        <div class="min-w-0 mt-auto">
+            <h2 class="text-2xl xl:text-3xl font-extrabold text-gray-900 tracking-tight truncate" title="<?= $stats['unpaid_invoices'] ?>">
+                <?= $stats['unpaid_invoices'] ?>
+            </h2>
         </div>
     </div>
     
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between group hover:shadow-md transition-shadow">
+    <!-- Outstanding -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col group hover:shadow-md hover:border-brand-200 transition-all">
         <div class="flex justify-between items-start mb-4">
-            <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform">
-                <i data-lucide="trending-down" class="w-5 h-5"></i>
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform shrink-0">
+                    <i data-lucide="trending-down" class="w-5 h-5"></i>
+                </div>
+                <p class="text-sm font-bold text-gray-500 ml-3">Outstanding</p>
             </div>
         </div>
-        <div class="min-w-0">
-            <p class="text-sm font-medium text-gray-500 mb-1">Outstanding</p>
-            <h2 class="text-2xl font-bold text-gray-900 truncate" title="<?= htmlspecialchars($global_currency) ?> <?= number_format($stats['total_remaining'], 2) ?>"><?= htmlspecialchars($global_currency) ?> <?= number_format($stats['total_remaining'], 2) ?></h2>
+        <div class="min-w-0 mt-auto">
+            <h2 class="text-2xl xl:text-3xl font-extrabold text-gray-900 tracking-tight truncate" title="<?= htmlspecialchars($global_currency) ?> <?= number_format($stats['total_remaining'], 2) ?>">
+                <span class="text-sm font-semibold text-gray-400 mr-1"><?= htmlspecialchars($global_currency) ?></span><?= number_format($stats['total_remaining'], 2) ?>
+            </h2>
         </div>
     </div>
     
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between group hover:shadow-md transition-shadow">
+    <!-- Total Customers -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col group hover:shadow-md hover:border-brand-200 transition-all">
         <div class="flex justify-between items-start mb-4">
-            <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-600 group-hover:scale-110 transition-transform">
-                <i data-lucide="users" class="w-5 h-5"></i>
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-600 group-hover:scale-110 transition-transform shrink-0">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                </div>
+                <p class="text-sm font-bold text-gray-500 ml-3">Customers</p>
             </div>
         </div>
-        <div class="min-w-0">
-            <p class="text-sm font-medium text-gray-500 mb-1">Total Customers</p>
-            <h2 class="text-2xl font-bold text-gray-900 truncate" title="<?= $stats['total_customers'] ?>"><?= $stats['total_customers'] ?></h2>
+        <div class="min-w-0 mt-auto">
+            <h2 class="text-2xl xl:text-3xl font-extrabold text-gray-900 tracking-tight truncate" title="<?= $stats['total_customers'] ?>">
+                <?= $stats['total_customers'] ?>
+            </h2>
         </div>
     </div>
 </div>
+
+<?php if($overdue_count > 0): ?>
+<!-- Overdue Invoices Alert Panel -->
+<div class="bg-red-50 border border-red-100 rounded-2xl p-4 sm:p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm animate-chart-pop">
+    <div class="flex items-center mb-3 sm:mb-0">
+        <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0 mr-4">
+            <i data-lucide="alert-triangle" class="w-5 h-5 text-red-600"></i>
+        </div>
+        <div>
+            <h3 class="text-red-800 font-bold">Action Required: Overdue Invoices</h3>
+            <p class="text-sm text-red-600 mt-0.5">You have <?= $overdue_count ?> invoice<?= $overdue_count > 1 ? 's' : '' ?> that <?= $overdue_count > 1 ? 'are' : 'is' ?> past due, totaling <strong class="font-bold"><?= $global_currency ?> <?= number_format($overdue_amount, 2) ?></strong>.</p>
+        </div>
+    </div>
+    <a href="<?= BASE_URL ?>/invoices/list.php?status=overdue" class="shrink-0 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-xl shadow-sm hover:shadow transition-all text-sm flex items-center">
+        Review Now <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+    </a>
+</div>
+<?php endif; ?>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
     <!-- Bar Chart -->
@@ -193,10 +300,12 @@ while($crow = mysqli_fetch_assoc($cres)) {
     </div>
 </div>
 
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <!-- Recent Invoices -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden lg:col-span-2">
     <div class="p-6 border-b border-gray-100 flex justify-between items-center">
         <h3 class="text-lg font-bold text-gray-900">Recent Invoices</h3>
-        <a href="/inv/invoices/list.php" class="text-brand-600 hover:text-brand-700 text-sm font-medium flex items-center">
+        <a href="<?= BASE_URL ?>/invoices/list.php" class="text-brand-600 hover:text-brand-700 text-sm font-medium flex items-center">
             View All <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
         </a>
     </div>
@@ -243,11 +352,11 @@ while($crow = mysqli_fetch_assoc($cres)) {
                             <?php endif; ?>
                         </td>
                         <td class="px-6 py-4 text-right space-x-2">
-                            <a href="/inv/invoices/view.php?id=<?= $inv['id'] ?>" class="text-gray-400 hover:text-brand-600 transition-colors" title="View">
+                            <a href="<?= BASE_URL ?>/invoices/view.php?id=<?= $inv['id'] ?>" class="text-gray-400 hover:text-brand-600 transition-colors" title="View">
                                 <i data-lucide="eye" class="w-5 h-5 inline"></i>
                             </a>
                             <?php if ($inv['status'] == 'Unpaid'): ?>
-                                <a href="/inv/invoices/edit.php?id=<?= $inv['id'] ?>" class="text-gray-400 hover:text-brand-600 transition-colors" title="Edit">
+                                <a href="<?= BASE_URL ?>/invoices/edit.php?id=<?= $inv['id'] ?>" class="text-gray-400 hover:text-brand-600 transition-colors" title="Edit">
                                     <i data-lucide="edit" class="w-5 h-5 inline"></i>
                                 </a>
                             <?php endif; ?>
@@ -269,6 +378,127 @@ while($crow = mysqli_fetch_assoc($cres)) {
     </div>
 </div>
 
+    <!-- Recent Activity Stream -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-gray-900">Recent Activity</h3>
+        </div>
+        <div class="p-6">
+            <div class="space-y-6">
+                <?php if (mysqli_num_rows($activities) > 0): ?>
+                    <?php while($act = mysqli_fetch_assoc($activities)): 
+                        $a_icon = 'bell'; $a_color = 'text-gray-500'; $a_bg = 'bg-gray-100';
+                        $t_lower = strtolower($act['title']);
+                        
+                        if(strpos($t_lower, 'payment') !== false || strpos($t_lower, 'paid') !== false) { 
+                            $a_icon = 'banknote'; $a_color = 'text-emerald-600'; $a_bg = 'bg-emerald-50'; 
+                        } elseif(strpos($t_lower, 'invoice') !== false) { 
+                            $a_icon = 'receipt'; $a_color = 'text-brand-600'; $a_bg = 'bg-brand-50'; 
+                        } elseif(strpos($t_lower, 'user') !== false || strpos($t_lower, 'login') !== false) { 
+                            $a_icon = 'user-cog'; $a_color = 'text-cyan-600'; $a_bg = 'bg-cyan-50'; 
+                        } elseif(strpos($t_lower, 'setting') !== false) { 
+                            $a_icon = 'settings'; $a_color = 'text-slate-600'; $a_bg = 'bg-slate-100'; 
+                        } elseif(strpos($t_lower, 'customer') !== false) { 
+                            $a_icon = 'users'; $a_color = 'text-blue-600'; $a_bg = 'bg-blue-50'; 
+                        }
+                    ?>
+                    <div class="relative flex items-start">
+                        <!-- Timeline line -->
+                        <div class="absolute top-8 left-4 bottom-[-24px] w-px bg-gray-100 last:hidden"></div>
+                        
+                        <div class="relative z-10 w-8 h-8 rounded-full flex items-center justify-center <?= $a_bg ?> shrink-0">
+                            <i data-lucide="<?= $a_icon ?>" class="w-4 h-4 <?= $a_color ?>"></i>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <p class="text-sm font-bold text-gray-900"><?= htmlspecialchars($act['title']) ?></p>
+                            <p class="text-xs text-gray-500 mt-0.5 leading-relaxed"><?= htmlspecialchars($act['message']) ?></p>
+                            <p class="text-[10px] font-medium text-gray-400 mt-1 uppercase tracking-wider"><?= date('M d, h:i A', strtotime($act['created_at'])) ?></p>
+                        </div>
+                    </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <p class="text-sm text-gray-500 text-center py-4">No recent activity.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Top Customers Leaderboard -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-gray-900">Top Customers</h3>
+            <a href="<?= BASE_URL ?>/customers/list.php" class="text-brand-600 hover:text-brand-700 text-sm font-medium flex items-center">
+                View All <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+            </a>
+        </div>
+        <div class="p-4 sm:p-6">
+            <div class="space-y-4">
+                <?php if (mysqli_num_rows($top_customers) > 0): ?>
+                    <?php while($tc = mysqli_fetch_assoc($top_customers)): 
+                        $initials = strtoupper(substr($tc['name'], 0, 2));
+                    ?>
+                    <div class="flex items-center justify-between p-4 rounded-xl border border-gray-100 transform transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg hover:border-brand-200 bg-white group cursor-default">
+                        <div class="flex items-center space-x-3 overflow-hidden pr-2">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-100 to-brand-50 text-brand-700 flex items-center justify-center font-bold text-sm shrink-0 border border-brand-100">
+                                <?= $initials ?>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-bold text-gray-900 truncate"><?= htmlspecialchars($tc['name']) ?></p>
+                                <p class="text-xs text-gray-500 truncate"><?= htmlspecialchars($tc['email']) ?></p>
+                            </div>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <p class="text-sm font-bold text-brand-600"><?= htmlspecialchars($global_currency) ?> <?= number_format($tc['total_revenue'], 2) ?></p>
+                            <p class="text-[10px] font-medium text-gray-400 uppercase tracking-wider">Revenue</p>
+                        </div>
+                    </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <p class="text-sm text-gray-500 text-center py-4">No customer data available yet.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Products Leaderboard -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-gray-900">Top Products</h3>
+            <a href="<?= BASE_URL ?>/products/list.php" class="text-brand-600 hover:text-brand-700 text-sm font-medium flex items-center">
+                View All <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+            </a>
+        </div>
+        <div class="p-4 sm:p-6">
+            <div class="space-y-4">
+                <?php if (mysqli_num_rows($top_products) > 0): ?>
+                    <?php while($tp = mysqli_fetch_assoc($top_products)): 
+                        $initials = strtoupper(substr($tp['name'], 0, 2));
+                    ?>
+                    <div class="flex items-center justify-between p-4 rounded-xl border border-gray-100 transform transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg hover:border-indigo-200 bg-white group cursor-default">
+                        <div class="flex items-center space-x-3 overflow-hidden pr-2">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-700 flex items-center justify-center font-bold text-sm shrink-0 border border-indigo-100">
+                                <?= $initials ?>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-bold text-gray-900 truncate"><?= htmlspecialchars($tp['name']) ?></p>
+                            </div>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <p class="text-sm font-bold text-indigo-600"><?= htmlspecialchars($global_currency) ?> <?= number_format($tp['total_revenue'], 2) ?></p>
+                            <p class="text-[10px] font-medium text-gray-400 uppercase tracking-wider">Revenue</p>
+                        </div>
+                    </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <p class="text-sm text-gray-500 text-center py-4">No product data available yet.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -276,10 +506,8 @@ document.addEventListener("DOMContentLoaded", function() {
     Chart.defaults.color = '#9ca3af';
     
     // Enable extremely visible global animations
-    Chart.defaults.animation = {
-        duration: 2500,
-        easing: 'easeOutQuart'
-    };
+    Chart.defaults.animation.duration = 2500;
+    Chart.defaults.animation.easing = 'easeOutQuart';
 
     // Revenue Bar Chart
     const ctxRev = document.getElementById('revenueChart').getContext('2d');
@@ -297,37 +525,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Progressive line drawing animation logic for Chart.js 4+
     const totalDuration = 2500;
     const dataLength = <?= count($chart_months) ?>;
-    const delayBetweenPoints = totalDuration / dataLength;
-    const previousY = (ctx) => ctx.index === 0 ? ctx.chart.scales.y.getPixelForValue(100) : ctx.chart.getDatasetMeta(ctx.datasetIndex).data[ctx.index - 1].getProps(['y'], true).y;
-    
-    const progressiveAnimation = {
-        x: {
-            type: 'number',
-            easing: 'linear',
-            duration: delayBetweenPoints,
-            from: NaN,
-            delay(ctx) {
-                if (ctx.type !== 'data' || ctx.xStarted) {
-                    return 0;
-                }
-                ctx.xStarted = true;
-                return ctx.index * delayBetweenPoints;
-            }
-        },
-        y: {
-            type: 'number',
-            easing: 'linear',
-            duration: delayBetweenPoints,
-            from: previousY,
-            delay(ctx) {
-                if (ctx.type !== 'data' || ctx.yStarted) {
-                    return 0;
-                }
-                ctx.yStarted = true;
-                return ctx.index * delayBetweenPoints;
-            }
-        }
-    };
+    // Standard beautiful easing animation will be inherited from defaults
 
     new Chart(ctxRev, {
         type: 'line',
@@ -367,7 +565,6 @@ document.addEventListener("DOMContentLoaded", function() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            animation: progressiveAnimation,
             plugins: {
                 legend: { 
                     display: true,
@@ -411,7 +608,7 @@ document.addEventListener("DOMContentLoaded", function() {
             labels: ['Paid', 'Partial', 'Unpaid'],
             datasets: [{
                 data: <?= json_encode($chart_status_counts) ?>,
-                backgroundColor: ['#10b981', '#f97316', '#ef4444'], // green-500, orange-500, red-500
+                backgroundColor: ['#6ee7b7', '#fdba74', '#fca5a5'], // emerald-300, orange-300, red-300
                 borderWidth: 0,
                 hoverOffset: 4
             }]

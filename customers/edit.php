@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if (isset($_SESSION['user_id'])) {
                     logActivity($conn, $_SESSION['user_id'], 'Customer Updated', "Updated customer {$name}");
                 }
-                redirect('/inv/customers/list.php?msg=' . urlencode("Customer '{$name}' successfully updated."));
+                redirect(BASE_URL . '/customers/list.php?msg=' . urlencode("Customer '{$name}' successfully updated."));
             } else {
                 $error = "Error updating customer.";
             }
@@ -61,7 +61,7 @@ require_once __DIR__ . '/../includes/header.php';
         <p class="text-gray-500 mt-1">Update client details and contact info</p>
     </div>
     <div class="flex space-x-3">
-        <a href="/inv/customers/list.php" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-xl shadow-sm transition-all flex items-center">
+        <a href="<?= BASE_URL ?>/customers/list.php" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-xl shadow-sm transition-all flex items-center">
             <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Back to List
         </a>
     </div>
@@ -76,18 +76,18 @@ require_once __DIR__ . '/../includes/header.php';
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Full Name <span class="text-red-500">*</span></label>
+                    <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Full Name <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The complete name of the user."></i> <span class="text-red-500">*</span></label>
                     <input type="text" name="name" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($row['name']) ?>" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Email Address <span class="text-red-500">*</span></label>
+                    <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Email Address <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The email address for communication and notifications."></i> <span class="text-red-500">*</span></label>
                     <input type="email" name="email" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($row['email']) ?>" required>
                 </div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number <span class="text-red-500">*</span></label>
+                    <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Phone Number <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="A contact number for this entity."></i> <span class="text-red-500">*</span></label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i data-lucide="phone" class="w-4 h-4 text-gray-400"></i>
@@ -97,7 +97,7 @@ require_once __DIR__ . '/../includes/header.php';
                     <p class="mt-2 text-xs text-gray-500">Format: +923XXXXXXXXX</p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Address / Company <span class="text-red-500">*</span></label>
+                    <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Address / Company <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The billing or physical address."></i> <span class="text-red-500">*</span></label>
                     <textarea name="address" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" rows="3" required><?= htmlspecialchars($row['address']) ?></textarea>
                 </div>
             </div>

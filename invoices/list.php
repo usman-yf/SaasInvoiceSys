@@ -16,7 +16,7 @@ $res = mysqli_query($conn, $sql);
         <p class="text-gray-500 mt-1">Manage and track all your invoices</p>
     </div>
     <div class="flex space-x-3">
-        <a href="/inv/invoices/create.php" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-4 rounded-xl shadow-sm hover:shadow transition-all flex items-center">
+        <a href="<?= BASE_URL ?>/invoices/create.php" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-4 rounded-xl shadow-sm hover:shadow transition-all flex items-center">
             <i data-lucide="plus" class="w-4 h-4 mr-2"></i> New Invoice
         </a>
     </div>
@@ -86,11 +86,11 @@ $res = mysqli_query($conn, $sql);
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <a href="/inv/invoices/view.php?id=<?= $row['id'] ?>" class="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors" title="View">
+                            <a href="<?= BASE_URL ?>/invoices/view.php?id=<?= $row['id'] ?>" class="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors" title="View">
                                 <i data-lucide="eye" class="w-4 h-4"></i>
                             </a>
                             <?php if ($row['status'] == 'Unpaid'): ?>
-                                <a href="/inv/invoices/edit.php?id=<?= $row['id'] ?>" class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
+                                <a href="<?= BASE_URL ?>/invoices/edit.php?id=<?= $row['id'] ?>" class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
                                     <i data-lucide="edit" class="w-4 h-4"></i>
                                 </a>
                             <?php else: ?>
@@ -98,13 +98,13 @@ $res = mysqli_query($conn, $sql);
                                     <i data-lucide="lock" class="w-4 h-4"></i>
                                 </span>
                             <?php endif; ?>
-                            <a href="/inv/invoices/view.php?id=<?= $row['id'] ?>&download_pdf=1" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Download PDF">
+                            <a href="<?= BASE_URL ?>/invoices/view.php?id=<?= $row['id'] ?>&download_pdf=1" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Download PDF">
                                 <i data-lucide="download" class="w-4 h-4"></i>
                             </a>
                             <button type="button" class="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Email" onclick="openEmailModal(<?= $row['id'] ?>, '<?= htmlspecialchars($row['customer_email']) ?>')">
                                 <i data-lucide="mail" class="w-4 h-4"></i>
                             </button>
-                            <button type="button" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete" onclick="confirmDelete('/inv/invoices/delete.php?id=<?= $row['id'] ?>', 'Delete invoice <?= htmlspecialchars($row['invoice_no'], ENT_QUOTES) ?>?')">
+                            <button type="button" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete" onclick="confirmDelete('<?= BASE_URL ?>/invoices/delete.php?id=<?= $row['id'] ?>', 'Delete invoice <?= htmlspecialchars($row['invoice_no'], ENT_QUOTES) ?>?')">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -148,14 +148,14 @@ $res = mysqli_query($conn, $sql);
                 </button>
             </div>
             
-            <form action="/inv/invoices/email.php" method="POST" onsubmit="showLoadingOverlay()">
+            <form action="<?= BASE_URL ?>/invoices/email.php" method="POST" onsubmit="showLoadingOverlay()">
                 <div class="p-6">
                     <input type="hidden" name="id" id="modal_invoice_id" value="">
                     <!-- Redirect back to list -->
-                    <input type="hidden" name="redirect_to" value="/inv/invoices/list.php">
+                    <input type="hidden" name="redirect_to" value="<?= BASE_URL ?>/invoices/list.php">
                     
                     <div class="mb-4">
-                        <label for="modal_email_to" class="block text-sm font-medium text-gray-700 mb-2">Recipient Email Address <span class="text-red-500">*</span></label>
+                        <label for="modal_email_to" class="flex items-center text-sm font-medium text-gray-700 mb-2">Recipient Email Address <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The email address for communication and notifications."></i> <span class="text-red-500">*</span></label>
                         <input type="email" id="modal_email_to" name="email_to" value="" required 
                                class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none">
                         <p class="mt-2 text-xs text-gray-500">The invoice PDF will be attached to this email.</p>

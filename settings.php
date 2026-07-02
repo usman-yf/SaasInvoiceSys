@@ -13,7 +13,37 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 
 $success = '';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+// Handle PHP Mailer config update separately
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['mail_settings_update'])) {
+    $mail_host = $_POST['mail_host'] ?? '';
+    $mail_port = $_POST['mail_port'] ?? 587;
+    $mail_encryption = $_POST['mail_encryption'] ?? 'tls';
+    $mail_username = $_POST['mail_username'] ?? '';
+    $mail_password = $_POST['mail_password'] ?? '';
+    $mail_from_address = $_POST['mail_from_address'] ?? '';
+    $mail_from_name = $_POST['mail_from_name'] ?? '';
+
+    $mail_config_content = "<?php\n" .
+        "// config/mail.php\n\n" .
+        "// Mail server configuration for PHPMailer (SMTP)\n" .
+        "define('MAIL_HOST', '" . addslashes($mail_host) . "');\n" .
+        "define('MAIL_PORT', " . (int)$mail_port . ");\n" .
+        "define('MAIL_ENCRYPTION', '" . addslashes($mail_encryption) . "');\n" .
+        "define('MAIL_USERNAME', '" . addslashes($mail_username) . "');\n" .
+        "define('MAIL_PASSWORD', '" . addslashes($mail_password) . "');\n\n" .
+        "define('MAIL_FROM_ADDRESS', '" . addslashes($mail_from_address) . "');\n" .
+        "define('MAIL_FROM_NAME', '" . addslashes($mail_from_name) . "');\n" .
+        "?>";
+
+    file_put_contents(__DIR__ . '/config/mail.php', $mail_config_content);
+    
+    if (isset($_SESSION['user_id'])) {
+        logActivity($conn, $_SESSION['user_id'], 'Settings Updated', 'Updated PHP Mailer Configuration.');
+    }
+    redirect(BASE_URL . '/settings.php?msg=updated');
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['mail_settings_update'])) {
     $settings_to_update = [
         'company_name',
         'company_email',
@@ -73,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    redirect('/inv/settings.php?msg=updated');
+    redirect(BASE_URL . '/settings.php?msg=updated');
 }
 
 // Fetch current values
@@ -92,6 +122,9 @@ $enable_remember_me = get_setting($conn, 'enable_remember_me', 'yes');
 $remember_me_days = get_setting($conn, 'remember_me_days', '30');
 $enable_2fa = get_setting($conn, 'enable_2fa', 'no');
 $two_fa_expiration_minutes = get_setting($conn, '2fa_expiration_minutes', '10');
+
+// Require mail config to read constants
+require_once __DIR__ . '/config/mail.php';
 
 require_once __DIR__ . '/includes/header.php';
 ?>
@@ -112,37 +145,37 @@ require_once __DIR__ . '/includes/header.php';
     <div class="w-full">
         <form action="" method="post">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-                <div class="bg-brand-600 text-white px-6 py-4 border-b border-brand-700">
+                <div class="bg-brand-50 text-brand-700 px-6 py-4 border-b border-brand-100">
                     <h3 class="text-lg font-bold flex items-center">
-                        <i data-lucide="building-2" class="w-5 h-5 mr-2 text-brand-200"></i> Company Details
+                        <i data-lucide="building-2" class="w-5 h-5 mr-2 text-brand-600"></i> Company Details
                     </h3>
                 </div>
 
                 <div class="p-6 flex-grow">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Company Name <span
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Company Name <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The official registered name of your company."></i> <span
                                     class="text-red-500">*</span></label>
                             <input type="text" name="company_name"
                                 class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm"
                                 value="<?= htmlspecialchars($company_name) ?>" required>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Company Email <span
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Company Email <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The primary contact email for your business."></i> <span
                                     class="text-red-500">*</span></label>
                             <input type="email" name="company_email"
                                 class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm"
                                 value="<?= htmlspecialchars($company_email) ?>" required>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Company Phone <span
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Company Phone <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The main contact phone number."></i> <span
                                     class="text-red-500">*</span></label>
                             <input type="text" name="company_phone"
                                 class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm"
                                 value="<?= htmlspecialchars($company_phone) ?>" required>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Company Address <span
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Company Address <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Your business's physical or registered address."></i> <span
                                     class="text-red-500">*</span></label>
                             <textarea name="company_address"
                                 class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm"
@@ -169,9 +202,9 @@ require_once __DIR__ . '/includes/header.php';
         <div>
             <form action="" method="post">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col">
-                    <div class="bg-brand-600 text-white px-6 py-4 border-b border-brand-700 rounded-t-2xl">
+                    <div class="bg-brand-50 text-brand-700 px-6 py-4 border-b border-brand-100 rounded-t-2xl">
                         <h3 class="text-lg font-bold flex items-center">
-                            <i data-lucide="globe" class="w-5 h-5 mr-2 text-brand-200"></i> Localization Settings
+                            <i data-lucide="globe" class="w-5 h-5 mr-2 text-brand-600"></i> Localization Settings
                         </h3>
                     </div>
 
@@ -242,9 +275,9 @@ require_once __DIR__ . '/includes/header.php';
         <div>
             <form action="" method="post">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col">
-                    <div class="bg-brand-600 text-white px-6 py-4 border-b border-brand-700 rounded-t-2xl">
+                    <div class="bg-brand-50 text-brand-700 px-6 py-4 border-b border-brand-100 rounded-t-2xl">
                         <h3 class="text-lg font-bold flex items-center">
-                            <i data-lucide="bell-ring" class="w-5 h-5 mr-2 text-brand-200"></i> Premium Toast Settings
+                            <i data-lucide="bell-ring" class="w-5 h-5 mr-2 text-brand-600"></i> Premium Toast Settings
                         </h3>
                     </div>
 
@@ -298,9 +331,9 @@ require_once __DIR__ . '/includes/header.php';
         <div>
             <form action="" method="post">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col">
-                    <div class="bg-brand-600 text-white px-6 py-4 border-b border-brand-700 rounded-t-2xl">
+                    <div class="bg-brand-50 text-brand-700 px-6 py-4 border-b border-brand-100 rounded-t-2xl">
                         <h3 class="text-lg font-bold flex items-center">
-                            <i data-lucide="loader" class="w-5 h-5 mr-2 text-brand-200"></i> Premium Preloader Settings
+                            <i data-lucide="loader" class="w-5 h-5 mr-2 text-brand-600"></i> Premium Preloader Settings
                         </h3>
                     </div>
 
@@ -352,9 +385,9 @@ require_once __DIR__ . '/includes/header.php';
         <div>
             <form action="" method="post">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col">
-                    <div class="bg-brand-600 text-white px-6 py-4 border-b border-brand-700 rounded-t-2xl">
+                    <div class="bg-brand-50 text-brand-700 px-6 py-4 border-b border-brand-100 rounded-t-2xl">
                         <h3 class="text-lg font-bold flex items-center">
-                            <i data-lucide="shield" class="w-5 h-5 mr-2 text-brand-200"></i> Security Settings
+                            <i data-lucide="shield" class="w-5 h-5 mr-2 text-brand-600"></i> Security Settings
                         </h3>
                     </div>
 
@@ -390,9 +423,9 @@ require_once __DIR__ . '/includes/header.php';
         <div>
             <form action="" method="post">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full">
-                    <div class="bg-brand-600 text-white px-6 py-4 border-b border-brand-700 rounded-t-2xl">
+                    <div class="bg-brand-50 text-brand-700 px-6 py-4 border-b border-brand-100 rounded-t-2xl">
                         <h3 class="text-lg font-bold flex items-center">
-                            <i data-lucide="shield-alert" class="w-5 h-5 mr-2 text-brand-200"></i> 2-Factor Authentication
+                            <i data-lucide="shield-alert" class="w-5 h-5 mr-2 text-brand-600"></i> 2-Factor Authentication
                         </h3>
                     </div>
 
@@ -400,8 +433,7 @@ require_once __DIR__ . '/includes/header.php';
                         <div class="space-y-5">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                    Enable 2-Factor Authentication
-                                </label>
+                                    Enable 2-Factor Authentication <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Require an email code when logging in."></i></label>
                                 <select name="enable_2fa"
                                     class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm">
                                     <option value="no" <?= $enable_2fa === 'no' ? 'selected' : '' ?>>Disabled</option>
@@ -411,8 +443,7 @@ require_once __DIR__ . '/includes/header.php';
                             
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                    2FA Code Expiration (Minutes)
-                                </label>
+                                    2FA Code Expiration (Minutes) <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Please provide the 2fa code expiration."></i></label>
                                 <input type="number" name="2fa_expiration_minutes"
                                     class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm"
                                     value="<?= htmlspecialchars($two_fa_expiration_minutes) ?>" min="1" max="60"
@@ -435,9 +466,9 @@ require_once __DIR__ . '/includes/header.php';
         <div>
             <form action="" method="post">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full">
-                    <div class="bg-brand-600 text-white px-6 py-4 border-b border-brand-700 rounded-t-2xl">
+                    <div class="bg-brand-50 text-brand-700 px-6 py-4 border-b border-brand-100 rounded-t-2xl">
                         <h3 class="text-lg font-bold flex items-center">
-                            <i data-lucide="log-in" class="w-5 h-5 mr-2 text-brand-200"></i> Remember Me Options
+                            <i data-lucide="log-in" class="w-5 h-5 mr-2 text-brand-600"></i> Remember Me Options
                         </h3>
                     </div>
 
@@ -445,8 +476,7 @@ require_once __DIR__ . '/includes/header.php';
                         <div class="space-y-5">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                    Enable "Remember Me" Option
-                                </label>
+                                    Enable "Remember Me" Option <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Please provide the enable "remember me" option."></i></label>
                                 <select name="enable_remember_me"
                                     class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm">
                                     <option value="yes" <?= $enable_remember_me === 'yes' ? 'selected' : '' ?>>Enabled</option>
@@ -456,8 +486,7 @@ require_once __DIR__ . '/includes/header.php';
                             
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                    Remember Me Duration (Days)
-                                </label>
+                                    Remember Me Duration (Days) <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="How long a user stays logged in."></i></label>
                                 <input type="number" name="remember_me_days"
                                     class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm"
                                     value="<?= htmlspecialchars($remember_me_days) ?>" min="1" max="365"
@@ -477,6 +506,82 @@ require_once __DIR__ . '/includes/header.php';
         </div>
 
 
+    </div>
+</div>
+
+<!-- PHP Mailer Settings Full Width -->
+<div class="mb-8">
+    <div class="w-full">
+        <form action="" method="post">
+            <input type="hidden" name="mail_settings_update" value="1">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+                <div class="bg-brand-50 text-brand-700 px-6 py-4 border-b border-brand-100">
+                    <h3 class="text-lg font-bold flex items-center">
+                        <i data-lucide="mail" class="w-5 h-5 mr-2 text-brand-600"></i> PHP Mailer Configuration
+                    </h3>
+                </div>
+
+                <div class="p-6 flex-grow">
+                    <!-- User Guide Alert -->
+                    <div class="mb-6 bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start space-x-3">
+                        <div class="shrink-0">
+                            <i data-lucide="info" class="w-5 h-5 text-blue-500 mt-0.5"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-semibold text-blue-900 mb-1">Configuration Guide</h4>
+                            <p class="text-xs text-blue-700 leading-relaxed">
+                                To send emails securely, you need to configure your SMTP settings. If you are using <strong>Gmail</strong> or <strong>Google Workspace</strong>:
+                                <ul class="list-disc list-inside mt-1 ml-1 space-y-0.5">
+                                    <li>Set <strong>Host</strong> to <code class="bg-blue-100 px-1 py-0.5 rounded text-blue-800">smtp.gmail.com</code> and <strong>Port</strong> to <code class="bg-blue-100 px-1 py-0.5 rounded text-blue-800">587</code> with <strong>TLS</strong> encryption.</li>
+                                    <li>For the password, do not use your regular login password. You must generate an <strong>App Password</strong> in your Google Account settings (requires 2-Step Verification to be enabled).</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Mail Host <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The SMTP server address (e.g., smtp.gmail.com)."></i> <span class="text-red-500">*</span></label>
+                            <input type="text" name="mail_host" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars(defined('MAIL_HOST') ? MAIL_HOST : '') ?>" required>
+                        </div>
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Mail Port <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The port used for SMTP (usually 587 or 465)."></i> <span class="text-red-500">*</span></label>
+                            <input type="number" name="mail_port" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars(defined('MAIL_PORT') ? MAIL_PORT : '587') ?>" required>
+                        </div>
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Mail Encryption <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The encryption method (TLS or SSL)."></i></label>
+                            <select name="mail_encryption" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm">
+                                <option value="tls" <?= (defined('MAIL_ENCRYPTION') && MAIL_ENCRYPTION === 'tls') ? 'selected' : '' ?>>TLS</option>
+                                <option value="ssl" <?= (defined('MAIL_ENCRYPTION') && MAIL_ENCRYPTION === 'ssl') ? 'selected' : '' ?>>SSL</option>
+                                <option value="" <?= (defined('MAIL_ENCRYPTION') && MAIL_ENCRYPTION === '') ? 'selected' : '' ?>>None</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Mail Username <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="A unique name used for logging in."></i> <span class="text-red-500">*</span></label>
+                            <input type="text" name="mail_username" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars(defined('MAIL_USERNAME') ? MAIL_USERNAME : '') ?>" required>
+                        </div>
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Mail Password <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="A strong, secure password for account access."></i> <span class="text-red-500">*</span></label>
+                            <input type="password" name="mail_password" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars(defined('MAIL_PASSWORD') ? MAIL_PASSWORD : '') ?>" required>
+                        </div>
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">From Address <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The billing or physical address."></i> <span class="text-red-500">*</span></label>
+                            <input type="email" name="mail_from_address" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars(defined('MAIL_FROM_ADDRESS') ? MAIL_FROM_ADDRESS : '') ?>" required>
+                        </div>
+                        <div class="md:col-span-2 lg:col-span-3">
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">From Name <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Please provide the from name."></i> <span class="text-red-500">*</span></label>
+                            <input type="text" name="mail_from_name" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars(defined('MAIL_FROM_NAME') ? MAIL_FROM_NAME : '') ?>" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end">
+                    <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 px-6 rounded-xl shadow-sm hover:shadow-md transition-all flex items-center">
+                        <i data-lucide="save" class="w-4 h-4 mr-2"></i> Save Mail Settings
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 

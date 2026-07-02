@@ -7,7 +7,7 @@ checkAuth();
 
 // Only allow admin access
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    redirect('/inv/index.php');
+    redirect(BASE_URL . '/index.php');
 }
 
 // Handle Clear All Logs

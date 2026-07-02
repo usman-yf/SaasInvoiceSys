@@ -93,7 +93,7 @@ $invoices_res = mysqli_query($conn, $invoices_sql);
         <button onclick="generatePDF()" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-xl shadow-sm transition-all flex items-center">
             <i data-lucide="printer" class="w-4 h-4 mr-2"></i> Print / PDF
         </button>
-        <a href="/inv/reports.php?start_date=<?= $start_date ?>&end_date=<?= $end_date ?>&export=csv" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-4 rounded-xl shadow-sm transition-all flex items-center">
+        <a href="<?= BASE_URL ?>/reports.php?start_date=<?= $start_date ?>&end_date=<?= $end_date ?>&export=csv" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-4 rounded-xl shadow-sm transition-all flex items-center">
             <i data-lucide="download" class="w-4 h-4 mr-2"></i> Export CSV
         </a>
     </div>
@@ -103,11 +103,11 @@ $invoices_res = mysqli_query($conn, $invoices_sql);
 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 print:hidden">
     <form method="GET" action="" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Invoice No</label>
+            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Invoice No <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Please provide the invoice no."></i></label>
             <input type="text" name="invoice_no" placeholder="INV-..." value="<?= htmlspecialchars($filter_invoice) ?>" class="w-full h-[42px] bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block px-3 outline-none transition-colors">
         </div>
         <div class="relative">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Customer</label>
+            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Customer <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The customer this invoice belongs to."></i></label>
             <select name="customer_id" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block px-3 py-2.5 transition-colors outline-none shadow-sm">
                 <option value="">All Customers</option>
                 <?php 
@@ -121,16 +121,16 @@ $invoices_res = mysqli_query($conn, $invoices_sql);
             </select>
         </div>        
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Start Date <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Please provide the start date."></i></label>
             <input type="date" name="start_date" value="<?= htmlspecialchars($start_date) ?>" class="w-full h-[42px] bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block px-3 outline-none transition-colors">
         </div>
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">End Date <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Please provide the end date."></i></label>
             <input type="date" name="end_date" value="<?= htmlspecialchars($end_date) ?>" class="w-full h-[42px] bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block px-3 outline-none transition-colors">
         </div>
         <div>
             <div class="flex space-x-2">
-                <a href="/inv/reports.php" class="flex-shrink-0 w-[42px] h-[42px] bg-white border border-gray-200 hover:bg-gray-50 text-gray-500 hover:text-red-500 rounded-xl shadow-sm transition-colors flex items-center justify-center" title="Clear Filters">
+                <a href="<?= BASE_URL ?>/reports.php" class="flex-shrink-0 w-[42px] h-[42px] bg-white border border-gray-200 hover:bg-gray-50 text-gray-500 hover:text-red-500 rounded-xl shadow-sm transition-colors flex items-center justify-center" title="Clear Filters">
                     <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
                 </a>
                 <button type="submit" class="flex-grow h-[42px] bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-xl shadow-sm transition-all flex items-center justify-center">

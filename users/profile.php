@@ -77,18 +77,18 @@ require_once __DIR__ . '/../includes/header.php';
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Full Name <span class="text-red-500">*</span></label>
+                        <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Full Name <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The complete name of the user."></i> <span class="text-red-500">*</span></label>
                         <input type="text" name="full_name" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($user['full_name']) ?>" required autocomplete="new-password" pattern="^[A-Za-z\s]+$" title="Only alphabet characters allowed">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email <span class="text-red-500">*</span></label>
+                        <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Email <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The email address for communication and notifications."></i> <span class="text-red-500">*</span></label>
                         <input type="email" name="email" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($user['email'] ?? '') ?>" required autocomplete="new-password">
                     </div>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                        <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Phone Number <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="A contact number for this entity."></i></label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i data-lucide="phone" class="w-4 h-4 text-gray-400"></i>
@@ -97,14 +97,14 @@ require_once __DIR__ . '/../includes/header.php';
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                        <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Role <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The permission level assigned to this user."></i></label>
                         <input type="text" class="w-full bg-gray-50 border border-gray-200 text-gray-500 text-sm rounded-xl block p-3 shadow-sm font-medium cursor-not-allowed" value="<?= strtoupper($user['role']) ?>" disabled>
                         <p class="mt-2 text-xs text-gray-500">Administrator approval is required to modify account role.</p>
                     </div>
                 </div>
 
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">New Password (Leave blank to keep current)</label>
+                    <label class="flex items-center text-sm font-medium text-gray-700 mb-2">New Password (Leave blank to keep current) <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="A strong, secure password for account access."></i></label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i data-lucide="lock" class="w-4 h-4 text-gray-400"></i>
