@@ -195,6 +195,26 @@ if (mysqli_num_rows($res) > 0) {
                 <div class="flex flex-col md:flex-row justify-between items-start">
                     <div class="w-full md:w-1/2 mb-8 md:mb-0">
                         <p class="text-sm text-gray-500 mb-6 max-w-sm">Thank you for your business. Please remit payment within 14 days of receiving this invoice.</p>
+                        <?php
+                        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+                        $veri_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . BASE_URL . "/verify.php?token=" . urlencode($invoice['token']) . "&inv=" . urlencode($invoice['invoice_no']);
+                        $qr_api_url = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&ecc=M&data=" . urlencode($veri_url);
+                        ?>
+                        <div class="flex space-x-4">
+                            <div class="inline-block p-2 border border-gray-100 rounded-xl bg-white shadow-sm text-center">
+                                <img src="<?= htmlspecialchars($qr_api_url) ?>" alt="QR Code"
+                                    class="w-28 h-28 mb-1 mx-auto opacity-90" crossorigin="anonymous">
+                                <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Scan to Verify</span>
+                            </div>
+                            <?php if (!empty($invoice['qr_code_tlv'])): ?>
+                                <div class="inline-block p-2 border border-gray-100 rounded-xl bg-white shadow-sm text-center">
+                                    <div id="zatca-qr-container"
+                                        class="w-28 h-28 mb-1 mx-auto flex items-center justify-center overflow-hidden"
+                                        data-qr="<?= htmlspecialchars($invoice['qr_code_tlv']) ?>"></div>
+                                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">ZATCA QR</span>
+                                </div>
+                            <?php endif; ?>
+                        </div>
                     </div>
                     
                     <div class="w-full md:w-5/12 text-sm">
@@ -235,6 +255,30 @@ if (mysqli_num_rows($res) > 0) {
     </div>
     <script>
         lucide.createIcons();
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var qrContainer = document.getElementById("zatca-qr-container");
+            if (qrContainer) {
+                var qrData = qrContainer.getAttribute("data-qr");
+                if (qrData) {
+                    new QRCode(qrContainer, {
+                        text: qrData,
+                        width: 256,
+                        height: 256,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
+                    
+                    var canvas = qrContainer.querySelector('canvas');
+                    var img = qrContainer.querySelector('img');
+                    if (canvas) { canvas.style.width = '100%'; canvas.style.height = '100%'; }
+                    if (img) { img.style.width = '100%'; img.style.height = '100%'; }
+                }
+            }
+        });
     </script>
 </body>
 </html>
