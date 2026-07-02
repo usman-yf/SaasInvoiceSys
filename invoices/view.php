@@ -347,6 +347,49 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error')
                     </div>
                 </div>
 
+                <!-- Decoded QR Data -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+                        <h3 class="font-bold text-gray-900 flex items-center">
+                            <i data-lucide="qr-code" class="w-5 h-5 mr-2 text-purple-600"></i> Decoded QR Data (TLV)
+                        </h3>
+                    </div>
+                    <div class="p-6 text-sm bg-gray-50 overflow-auto max-h-[300px]">
+                        <?php 
+                        if (!empty($invoice['qr_code_tlv'])) {
+                            $tlv_data = base64_decode($invoice['qr_code_tlv']);
+                            $i = 0;
+                            $tags_map = [
+                                1 => 'Seller Name', 2 => 'VAT Number', 3 => 'Timestamp',
+                                4 => 'Invoice Total', 5 => 'VAT Total', 6 => 'XML Hash',
+                                7 => 'ECDSA Signature', 8 => 'Public Key / Cert', 9 => 'Certificate Signature'
+                            ];
+                            echo '<div class="space-y-3">';
+                            while ($i < strlen($tlv_data)) {
+                                if ($i >= strlen($tlv_data)) break;
+                                $tag = ord($tlv_data[$i++]);
+                                if ($i >= strlen($tlv_data)) break;
+                                $len = ord($tlv_data[$i++]);
+                                $val = substr($tlv_data, $i, $len);
+                                $i += $len;
+                                
+                                $tag_name = $tags_map[$tag] ?? "Tag $tag";
+                                echo '<div>';
+                                echo '<p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">' . $tag_name . ' <span class="text-[10px] font-normal text-gray-400 lowercase">(Tag ' . $tag . ', Len ' . $len . ')</span></p>';
+                                echo '<div class="bg-white p-2 border border-gray-200 rounded text-gray-700 font-mono text-xs break-all">' . htmlspecialchars($val) . '</div>';
+                                echo '</div>';
+                                
+                                // Temporarily break if we hit tag 7, since tags 8+ (certificates) can exceed 255 bytes and wrap around in basic chr() implementation
+                                if ($tag == 7) break; 
+                            }
+                            echo '</div>';
+                        } else {
+                            echo '<p class="text-gray-400 italic text-center py-4">QR Code not generated yet.</p>';
+                        }
+                        ?>
+                    </div>
+                </div>
+
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
                         <h3 class="font-bold text-gray-900 flex items-center">
