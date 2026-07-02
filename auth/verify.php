@@ -51,6 +51,7 @@ if (empty($token)) {
     }
 }
 
+$page_title = 'Account Verification';
 require_once __DIR__ . '/../includes/header.php';
 ?>
 

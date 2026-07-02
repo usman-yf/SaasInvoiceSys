@@ -24,7 +24,10 @@ if (mysqli_num_rows($res) > 0) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Invoice - <?= htmlspecialchars($invoice_no) ?></title>
+    <?php $header_company_name = get_setting($conn, 'company_name', 'Invoice Management System'); ?>
+    <title>Verify Invoice <?= htmlspecialchars($invoice_no) ?> - <?= htmlspecialchars($header_company_name) ?></title>
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'/%3E%3C/svg%3E" type="image/svg+xml">
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS -->
