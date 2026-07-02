@@ -29,6 +29,20 @@ if($row = mysqli_fetch_assoc($res)) $stats['unpaid_invoices'] = $row['c'];
 $res = mysqli_query($conn, "SELECT SUM(GREATEST(0, i.total - COALESCE((SELECT SUM(amount) FROM payments p WHERE p.invoice_id = i.id), 0))) as outstanding FROM invoices i");
 $stats['total_remaining'] = mysqli_fetch_assoc($res)['outstanding'] ?? 0;
 
+// ZATCA Stats
+$stats['zatca_cleared'] = 0;
+$stats['zatca_reported'] = 0;
+$stats['zatca_failed'] = 0;
+
+$res = mysqli_query($conn, "SELECT COUNT(*) as c FROM invoices WHERE zatca_status = 'Cleared'");
+if($row = mysqli_fetch_assoc($res)) $stats['zatca_cleared'] = $row['c'];
+
+$res = mysqli_query($conn, "SELECT COUNT(*) as c FROM invoices WHERE zatca_status = 'Reported'");
+if($row = mysqli_fetch_assoc($res)) $stats['zatca_reported'] = $row['c'];
+
+$res = mysqli_query($conn, "SELECT COUNT(*) as c FROM invoices WHERE zatca_status IN ('Error', 'Rejected')");
+if($row = mysqli_fetch_assoc($res)) $stats['zatca_failed'] = $row['c'];
+
 // MoM Growth Logic
 $current_month = date('Y-m');
 $prev_month = date('Y-m', strtotime('-1 month'));
@@ -238,6 +252,63 @@ while($crow = mysqli_fetch_assoc($cres)) {
         <div class="min-w-0 mt-auto">
             <h2 class="text-2xl xl:text-3xl font-extrabold text-gray-900 tracking-tight truncate" title="<?= $stats['total_customers'] ?>">
                 <?= $stats['total_customers'] ?>
+            </h2>
+        </div>
+    </div>
+</div>
+
+<!-- ZATCA Analytics -->
+<h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+    <i data-lucide="shield-check" class="w-5 h-5 mr-2 text-brand-600"></i> ZATCA Phase 2 Metrics
+</h3>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+    <!-- Cleared Invoices -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col group hover:shadow-md hover:border-green-200 transition-all">
+        <div class="flex justify-between items-start mb-4">
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-600 group-hover:scale-110 transition-transform shrink-0">
+                    <i data-lucide="check-circle" class="w-5 h-5"></i>
+                </div>
+                <p class="text-sm font-bold text-gray-500 ml-3">Cleared (Standard)</p>
+            </div>
+        </div>
+        <div class="min-w-0 mt-auto">
+            <h2 class="text-2xl xl:text-3xl font-extrabold text-gray-900 tracking-tight truncate" title="<?= $stats['zatca_cleared'] ?>">
+                <?= $stats['zatca_cleared'] ?>
+            </h2>
+        </div>
+    </div>
+    
+    <!-- Reported Invoices -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col group hover:shadow-md hover:border-blue-200 transition-all">
+        <div class="flex justify-between items-start mb-4">
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform shrink-0">
+                    <i data-lucide="send" class="w-5 h-5"></i>
+                </div>
+                <p class="text-sm font-bold text-gray-500 ml-3">Reported (Simplified)</p>
+            </div>
+        </div>
+        <div class="min-w-0 mt-auto">
+            <h2 class="text-2xl xl:text-3xl font-extrabold text-gray-900 tracking-tight truncate" title="<?= $stats['zatca_reported'] ?>">
+                <?= $stats['zatca_reported'] ?>
+            </h2>
+        </div>
+    </div>
+
+    <!-- Failed Invoices -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col group hover:shadow-md hover:border-red-200 transition-all">
+        <div class="flex justify-between items-start mb-4">
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-600 group-hover:scale-110 transition-transform shrink-0">
+                    <i data-lucide="x-octagon" class="w-5 h-5"></i>
+                </div>
+                <p class="text-sm font-bold text-gray-500 ml-3">Failed / Rejected</p>
+            </div>
+        </div>
+        <div class="min-w-0 mt-auto">
+            <h2 class="text-2xl xl:text-3xl font-extrabold text-gray-900 tracking-tight truncate" title="<?= $stats['zatca_failed'] ?>">
+                <?= $stats['zatca_failed'] ?>
             </h2>
         </div>
     </div>

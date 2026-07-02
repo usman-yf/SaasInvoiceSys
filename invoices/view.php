@@ -24,15 +24,46 @@ $company_name = get_setting($conn, 'company_name', 'Tech Solutions Ltd.');
 $company_email = get_setting($conn, 'company_email', 'info@techsolutions.com');
 $company_phone = get_setting($conn, 'company_phone', '+92 300 1234567');
 $company_address = get_setting($conn, 'company_address', "123 Business Street\nLahore, Pakistan");
+
+$zStatus = $invoice['zatca_status'] ?? 'Draft';
+$zColor = 'gray';
+if ($zStatus == 'Generated') $zColor = 'blue';
+elseif ($zStatus == 'Signed') $zColor = 'indigo';
+elseif ($zStatus == 'Cleared' || $zStatus == 'Reported') $zColor = 'green';
+elseif ($zStatus == 'Pending Clearance') $zColor = 'yellow';
+elseif ($zStatus == 'Rejected' || $zStatus == 'Error') $zColor = 'red';
 ?>
 
 <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0 d-print-none">
     <div>
-        <h1 class="text-2xl font-bold text-gray-900">Invoice Preview</h1>
+        <h1 class="text-2xl font-bold text-gray-900 flex items-center">
+            Invoice Preview
+            <span class="ml-3 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-<?= $zColor ?>-100 text-<?= $zColor ?>-800 border border-<?= $zColor ?>-200">
+                ZATCA: <?= htmlspecialchars($zStatus) ?>
+            </span>
+        </h1>
         <p class="text-gray-500 mt-1">Review and manage this invoice</p>
     </div>
     <div class="flex flex-wrap items-center gap-2">
-        <?php if ($invoice['status'] == 'Unpaid'): ?>
+        <?php if ($zStatus == 'Draft'): ?>
+            <form action="<?= BASE_URL ?>/zatca/process.php" method="POST" class="inline">
+                <input type="hidden" name="invoice_id" value="<?= $id ?>">
+                <input type="hidden" name="action" value="generate">
+                <button type="submit" class="px-3 py-2 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors flex items-center text-sm shadow-sm">
+                    <i data-lucide="file-code" class="w-4 h-4 mr-2 text-brand-600"></i> Generate XML
+                </button>
+            </form>
+        <?php elseif ($zStatus == 'Generated' || $zStatus == 'Rejected'): ?>
+            <form action="<?= BASE_URL ?>/zatca/process.php" method="POST" class="inline">
+                <input type="hidden" name="invoice_id" value="<?= $id ?>">
+                <input type="hidden" name="action" value="submit">
+                <button type="submit" class="px-3 py-2 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors flex items-center text-sm shadow-sm">
+                    <i data-lucide="send" class="w-4 h-4 mr-2 text-brand-600"></i> Submit to ZATCA
+                </button>
+            </form>
+        <?php endif; ?>
+        
+        <?php if ($invoice['status'] == 'Unpaid' && $zStatus == 'Draft'): ?>
             <a href="<?= BASE_URL ?>/invoices/edit.php?id=<?= $id ?>" class="px-3 py-2 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors flex items-center text-sm shadow-sm">
                 <i data-lucide="edit" class="w-4 h-4 mr-2 text-gray-500"></i> Edit
             </a>
@@ -55,7 +86,21 @@ $company_address = get_setting($conn, 'company_address', "123 Business Street\nL
     </div>
 </div>
 
-<div class="bg-white rounded-2xl shadow-float border border-gray-100 overflow-hidden mb-8" id="print-area">
+<!-- Tabs Navigation -->
+<div class="mb-6 border-b border-gray-200 d-print-none">
+    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+        <button onclick="switchTab('preview')" id="tab-btn-preview" class="tab-btn border-brand-500 text-brand-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center">
+            <i data-lucide="file-text" class="w-4 h-4 mr-2"></i> Invoice Preview
+        </button>
+        <button onclick="switchTab('zatca')" id="tab-btn-zatca" class="tab-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center">
+            <i data-lucide="code" class="w-4 h-4 mr-2"></i> ZATCA XML & Logs
+        </button>
+    </nav>
+</div>
+
+<!-- Tab Content: Preview -->
+<div id="tab-content-preview" class="tab-content block">
+    <div class="bg-white rounded-2xl shadow-float border border-gray-100 overflow-hidden mb-8" id="print-area">
     <div class="p-8 sm:p-12">
         <div class="flex justify-between items-start mb-12 flex-col sm:flex-row">
             <div>
@@ -148,9 +193,17 @@ $company_address = get_setting($conn, 'company_address', "123 Business Street\nL
                 $veri_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . BASE_URL . "/verify.php?token=" . urlencode($invoice['token']) . "&inv=" . urlencode($invoice['invoice_no']);
                 $qr_api_url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&ecc=L&data=" . urlencode($veri_url);
                 ?>
-                <div class="inline-block p-2 border border-gray-100 rounded-xl bg-white shadow-sm text-center">
-                    <img src="<?= htmlspecialchars($qr_api_url) ?>" alt="QR Code" class="w-20 h-20 mb-1 mx-auto opacity-90" crossorigin="anonymous">
-                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Scan to Verify</span>
+                <div class="flex space-x-4">
+                    <div class="inline-block p-2 border border-gray-100 rounded-xl bg-white shadow-sm text-center">
+                        <img src="<?= htmlspecialchars($qr_api_url) ?>" alt="QR Code" class="w-20 h-20 mb-1 mx-auto opacity-90" crossorigin="anonymous">
+                        <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Scan to Verify</span>
+                    </div>
+                    <?php if (!empty($invoice['qr_code_tlv'])): ?>
+                    <div class="inline-block p-2 border border-gray-100 rounded-xl bg-white shadow-sm text-center">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&ecc=L&data=<?= urlencode($invoice['qr_code_tlv']) ?>" alt="ZATCA QR Code" class="w-20 h-20 mb-1 mx-auto opacity-90" crossorigin="anonymous">
+                        <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">ZATCA QR</span>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
             
@@ -188,6 +241,95 @@ $company_address = get_setting($conn, 'company_address', "123 Business Street\nL
         </div>
     </div>
 </div>
+</div>
+
+<!-- Tab Content: ZATCA XML & Logs -->
+<div id="tab-content-zatca" class="tab-content hidden d-print-none">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- XML Content -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+            <div class="bg-brand-50 text-brand-700 px-6 py-4 border-b border-brand-100 flex justify-between items-center">
+                <h3 class="text-lg font-bold flex items-center">
+                    <i data-lucide="file-code" class="w-5 h-5 mr-2 text-brand-600"></i> UBL 2.1 XML
+                </h3>
+                <?php if (!empty($invoice['xml_content'])): ?>
+                    <button onclick="navigator.clipboard.writeText(document.getElementById('xml-content').innerText); toast('XML Copied', 'success')" class="text-xs font-medium text-brand-600 hover:text-brand-800">
+                        Copy XML
+                    </button>
+                <?php endif; ?>
+            </div>
+            <div class="p-6 flex-grow bg-gray-50 overflow-auto max-h-[500px]">
+                <?php if (!empty($invoice['xml_content'])): ?>
+                    <pre id="xml-content" class="text-xs text-gray-600 font-mono whitespace-pre-wrap"><?= htmlspecialchars($invoice['xml_content']) ?></pre>
+                <?php else: ?>
+                    <div class="flex flex-col items-center justify-center h-full text-gray-400 py-12">
+                        <i data-lucide="file-dashed" class="w-12 h-12 mb-3"></i>
+                        <p>XML not generated yet.</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        
+        <!-- Logs and Details -->
+        <div class="space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+                    <h3 class="font-bold text-gray-900 flex items-center">
+                        <i data-lucide="shield-check" class="w-5 h-5 mr-2 text-green-600"></i> Cryptographic Details
+                    </h3>
+                </div>
+                <div class="p-6 text-sm">
+                    <div class="mb-4">
+                        <p class="text-gray-500 font-medium mb-1">Invoice Hash (SHA-256 Base64)</p>
+                        <div class="bg-gray-50 p-2 rounded border border-gray-200 font-mono text-xs break-all text-gray-600">
+                            <?= !empty($invoice['invoice_hash']) ? htmlspecialchars($invoice['invoice_hash']) : 'N/A' ?>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-gray-500 font-medium mb-1">Cryptographic Stamp (Signature)</p>
+                        <div class="bg-gray-50 p-2 rounded border border-gray-200 font-mono text-xs break-all text-gray-600">
+                            <?= !empty($invoice['crypt_stamp']) ? htmlspecialchars($invoice['crypt_stamp']) : 'N/A' ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+                    <h3 class="font-bold text-gray-900 flex items-center">
+                        <i data-lucide="activity" class="w-5 h-5 mr-2 text-blue-600"></i> ZATCA API Response
+                    </h3>
+                </div>
+                <div class="p-6 text-sm bg-gray-50 max-h-[250px] overflow-auto">
+                    <?php if (!empty($invoice['zatca_response'])): ?>
+                        <pre class="font-mono text-xs text-gray-600 whitespace-pre-wrap"><?= htmlspecialchars($invoice['zatca_response']) ?></pre>
+                    <?php else: ?>
+                        <p class="text-gray-400 italic text-center py-4">No API response recorded yet.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchTab(tabId) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        // Reset all buttons
+        document.querySelectorAll('.tab-btn').forEach(el => {
+            el.classList.remove('border-brand-500', 'text-brand-600');
+            el.classList.add('border-transparent', 'text-gray-500');
+        });
+        
+        // Show selected tab
+        document.getElementById('tab-content-' + tabId).classList.remove('hidden');
+        // Highlight selected button
+        const btn = document.getElementById('tab-btn-' + tabId);
+        btn.classList.remove('border-transparent', 'text-gray-500');
+        btn.classList.add('border-brand-500', 'text-brand-600');
+    }
+</script>
 
 <style>
     @media print {

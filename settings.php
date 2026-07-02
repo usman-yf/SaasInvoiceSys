@@ -46,9 +46,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['mail_settings_update']
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['mail_settings_update'])) {
     $settings_to_update = [
         'company_name',
+        'company_arabic_name',
         'company_email',
         'company_phone',
-        'company_address',
+        'company_vat',
+        'company_cr',
+        'company_building',
+        'company_street',
+        'company_district',
+        'company_city',
+        'company_postal',
+        'company_country',
+        'company_branch',
+        'zatca_device_uuid',
         'email_verify_expire_minutes',
         'currency',
         'toast_position',
@@ -58,16 +68,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['mail_settings_update'
         'enable_remember_me',
         'remember_me_days',
         'enable_2fa',
-        '2fa_expiration_minutes'
+        '2fa_expiration_minutes',
+        'zatca_env',
+        'zatca_private_key',
+        'zatca_public_cert',
+        'zatca_csr',
+        'zatca_api_secret'
     ];
 
     $defaults = [
         'company_name' => 'InvSys',
+        'company_arabic_name' => '',
         'company_email' => 'contact@mycompany.com',
         'company_phone' => '+9230011111111',
-        'company_address' => '123 Business Rd, Tech City, USA',
+        'company_vat' => '300000000000003',
+        'company_cr' => '1010010000',
+        'company_building' => '1234',
+        'company_street' => 'Business Road',
+        'company_district' => 'Tech District',
+        'company_city' => 'Riyadh',
+        'company_postal' => '12222',
+        'company_country' => 'SA',
+        'company_branch' => 'Main',
+        'zatca_device_uuid' => '',
         'email_verify_expire_minutes' => '1440',
-        'currency' => 'Rs',
+        'currency' => 'SAR',
         'toast_position' => 'top-right',
         'toast_duration' => '3000',
         'enable_preloader' => 'yes',
@@ -75,7 +100,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['mail_settings_update'
         'enable_remember_me' => 'yes',
         'remember_me_days' => '30',
         'enable_2fa' => 'no',
-        '2fa_expiration_minutes' => '10'
+        '2fa_expiration_minutes' => '10',
+        'zatca_env' => 'sandbox',
+        'zatca_private_key' => '',
+        'zatca_public_cert' => '',
+        'zatca_csr' => '',
+        'zatca_api_secret' => ''
     ];
 
     $changed_settings = [];
@@ -108,9 +138,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['mail_settings_update'
 
 // Fetch current values
 $company_name = get_setting($conn, 'company_name', 'InvSys');
+$company_arabic_name = get_setting($conn, 'company_arabic_name', '');
 $company_email = get_setting($conn, 'company_email', 'contact@mycompany.com');
 $company_phone = get_setting($conn, 'company_phone', '+9230011111111');
-$company_address = get_setting($conn, 'company_address', '123 Business Rd, Tech City, USA');
+$company_vat = get_setting($conn, 'company_vat', '300000000000003');
+$company_cr = get_setting($conn, 'company_cr', '1010010000');
+$company_building = get_setting($conn, 'company_building', '1234');
+$company_street = get_setting($conn, 'company_street', 'Business Road');
+$company_district = get_setting($conn, 'company_district', 'Tech District');
+$company_city = get_setting($conn, 'company_city', 'Riyadh');
+$company_postal = get_setting($conn, 'company_postal', '12222');
+$company_country = get_setting($conn, 'company_country', 'SA');
+$company_branch = get_setting($conn, 'company_branch', 'Main');
+$zatca_device_uuid = get_setting($conn, 'zatca_device_uuid', '');
+$zatca_env = get_setting($conn, 'zatca_env', 'sandbox');
+$zatca_private_key = get_setting($conn, 'zatca_private_key', '');
+$zatca_public_cert = get_setting($conn, 'zatca_public_cert', '');
+$zatca_csr = get_setting($conn, 'zatca_csr', '');
+$zatca_api_secret = get_setting($conn, 'zatca_api_secret', '');
 // Settings fetched here
 $email_verify_expire_minutes = get_setting($conn, 'email_verify_expire_minutes', '1440');
 $currency = get_setting($conn, 'currency', 'Rs');
@@ -152,34 +197,68 @@ require_once __DIR__ . '/includes/header.php';
                 </div>
 
                 <div class="p-6 flex-grow">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                         <div>
-                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Company Name <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The official registered name of your company."></i> <span
-                                    class="text-red-500">*</span></label>
-                            <input type="text" name="company_name"
-                                class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm"
-                                value="<?= htmlspecialchars($company_name) ?>" required>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Company Name (En) <span class="text-red-500 ml-1">*</span></label>
+                            <input type="text" name="company_name" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($company_name) ?>" required>
                         </div>
                         <div>
-                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Company Email <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The primary contact email for your business."></i> <span
-                                    class="text-red-500">*</span></label>
-                            <input type="email" name="company_email"
-                                class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm"
-                                value="<?= htmlspecialchars($company_email) ?>" required>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Company Name (Ar) <span class="text-red-500 ml-1">*</span></label>
+                            <input type="text" name="company_arabic_name" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($company_arabic_name) ?>" dir="rtl" required>
                         </div>
                         <div>
-                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Company Phone <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="The main contact phone number."></i> <span
-                                    class="text-red-500">*</span></label>
-                            <input type="text" name="company_phone"
-                                class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm"
-                                value="<?= htmlspecialchars($company_phone) ?>" required>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">VAT Number (15 Digits) <span class="text-red-500 ml-1">*</span></label>
+                            <input type="text" name="company_vat" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($company_vat) ?>" required>
                         </div>
                         <div>
-                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Company Address <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Your business's physical or registered address."></i> <span
-                                    class="text-red-500">*</span></label>
-                            <textarea name="company_address"
-                                class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm"
-                                rows="3" required><?= htmlspecialchars($company_address) ?></textarea>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">CR Number</label>
+                            <input type="text" name="company_cr" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($company_cr) ?>">
+                        </div>
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Company Email</label>
+                            <input type="email" name="company_email" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($company_email) ?>">
+                        </div>
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Company Phone</label>
+                            <input type="text" name="company_phone" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($company_phone) ?>">
+                        </div>
+                    </div>
+                    
+                    <hr class="border-gray-100 my-6">
+                    <h4 class="font-bold text-gray-900 mb-4">National Address Details</h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Building No <span class="text-red-500 ml-1">*</span></label>
+                            <input type="text" name="company_building" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($company_building) ?>" required>
+                        </div>
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Street <span class="text-red-500 ml-1">*</span></label>
+                            <input type="text" name="company_street" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($company_street) ?>" required>
+                        </div>
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">District <span class="text-red-500 ml-1">*</span></label>
+                            <input type="text" name="company_district" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($company_district) ?>" required>
+                        </div>
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">City <span class="text-red-500 ml-1">*</span></label>
+                            <input type="text" name="company_city" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($company_city) ?>" required>
+                        </div>
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Postal Code <span class="text-red-500 ml-1">*</span></label>
+                            <input type="text" name="company_postal" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($company_postal) ?>" required>
+                        </div>
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Country Code (e.g. SA) <span class="text-red-500 ml-1">*</span></label>
+                            <input type="text" name="company_country" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($company_country) ?>" required>
+                        </div>
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Branch / Industry</label>
+                            <input type="text" name="company_branch" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($company_branch) ?>">
+                        </div>
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">ZATCA Device UUID</label>
+                            <input type="text" name="zatca_device_uuid" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" value="<?= htmlspecialchars($zatca_device_uuid) ?>" placeholder="Auto-generated if blank">
                         </div>
                     </div>
                 </div>
@@ -192,6 +271,63 @@ require_once __DIR__ . '/includes/header.php';
                 </div>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- Full Width ZATCA Cryptographic Details -->
+<div class="mb-8">
+    <div class="w-full">
+        <form action="" method="post">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+                <div class="bg-brand-50 text-brand-700 px-6 py-4 border-b border-brand-100 flex justify-between items-center">
+                    <h3 class="text-lg font-bold flex items-center">
+                        <i data-lucide="key" class="w-5 h-5 mr-2 text-brand-600"></i> ZATCA Configuration & Cryptographic Keys
+                    </h3>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm font-medium">Environment:</span>
+                        <select name="zatca_env" class="bg-white border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-1.5 transition-colors outline-none shadow-sm">
+                            <option value="sandbox" <?= $zatca_env === 'sandbox' ? 'selected' : '' ?>>Sandbox (Developer)</option>
+                            <option value="simulation" <?= $zatca_env === 'simulation' ? 'selected' : '' ?>>Simulation (Pre-Production)</option>
+                            <option value="production" <?= $zatca_env === 'production' ? 'selected' : '' ?>>Production</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="p-6 flex-grow">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Private Key (ECDSA secp256k1) <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Kept highly secure. Auto-generated via CSR process."></i></label>
+                            <textarea name="zatca_private_key" class="w-full bg-gray-50 border border-gray-200 text-gray-600 text-xs rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm font-mono h-32" placeholder="-----BEGIN EC PRIVATE KEY-----..."><?= htmlspecialchars($zatca_private_key) ?></textarea>
+                        </div>
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">CSR (Certificate Signing Request)</label>
+                            <textarea name="zatca_csr" class="w-full bg-gray-50 border border-gray-200 text-gray-600 text-xs rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm font-mono h-32" placeholder="-----BEGIN CERTIFICATE REQUEST-----..."><?= htmlspecialchars($zatca_csr) ?></textarea>
+                        </div>
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">Public Certificate (X.509) <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Received from ZATCA after submitting CSR."></i></label>
+                            <textarea name="zatca_public_cert" class="w-full bg-gray-50 border border-gray-200 text-gray-600 text-xs rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm font-mono h-32" placeholder="-----BEGIN CERTIFICATE-----..."><?= htmlspecialchars($zatca_public_cert) ?></textarea>
+                        </div>
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-gray-700 mb-2">API Secret (Binary Security Token or Secret) <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Authentication token for ZATCA APIs."></i></label>
+                            <textarea name="zatca_api_secret" class="w-full bg-gray-50 border border-gray-200 text-gray-600 text-xs rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm font-mono h-32" placeholder="Token goes here..."><?= htmlspecialchars($zatca_api_secret) ?></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-between items-center">
+                    <button type="submit" form="generateKeysForm"
+                        class="bg-gray-800 hover:bg-gray-900 text-white font-medium py-2.5 px-6 rounded-xl shadow-sm hover:shadow-md transition-all flex items-center" onclick="return confirm('This will overwrite your existing Private Key and CSR. Are you sure?');">
+                        <i data-lucide="key" class="w-4 h-4 mr-2"></i> Auto-Generate Key & CSR
+                    </button>
+                    <button type="submit"
+                        class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 px-6 rounded-xl shadow-sm hover:shadow-md transition-all flex items-center">
+                        <i data-lucide="save" class="w-4 h-4 mr-2"></i> Save ZATCA Configuration
+                    </button>
+                </div>
+            </div>
+        </form>
+        <!-- Hidden Form to Generate Keys -->
+        <form id="generateKeysForm" method="POST" action="<?= BASE_URL ?>/zatca/generate_keys.php" class="hidden"></form>
     </div>
 </div>
 

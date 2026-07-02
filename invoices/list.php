@@ -42,7 +42,8 @@ $res = mysqli_query($conn, $sql);
                     <th scope="col" class="px-6 py-4 font-medium">Date</th>
                     <th scope="col" class="px-6 py-4 font-medium">Total</th>
                     <th scope="col" class="px-6 py-4 font-medium">Due</th>
-                    <th scope="col" class="px-6 py-4 font-medium">Status</th>
+                    <th scope="col" class="px-6 py-4 font-medium">Payment</th>
+                    <th scope="col" class="px-6 py-4 font-medium">ZATCA Status</th>
                     <th scope="col" class="px-6 py-4 font-medium text-right">Actions</th>
                 </tr>
             </thead>
@@ -84,6 +85,20 @@ $res = mysqli_query($conn, $sql);
                             </span>
                         <?php endif; ?>
                     </td>
+                    <td class="px-6 py-4">
+                        <?php
+                        $zStatus = $row['zatca_status'] ?? 'Draft';
+                        $zColor = 'gray';
+                        if ($zStatus == 'Generated') $zColor = 'blue';
+                        elseif ($zStatus == 'Signed') $zColor = 'indigo';
+                        elseif ($zStatus == 'Cleared' || $zStatus == 'Reported') $zColor = 'green';
+                        elseif ($zStatus == 'Pending Clearance') $zColor = 'yellow';
+                        elseif ($zStatus == 'Rejected' || $zStatus == 'Error') $zColor = 'red';
+                        ?>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-<?= $zColor ?>-100 text-<?= $zColor ?>-800 border border-<?= $zColor ?>-200">
+                            <?= htmlspecialchars($zStatus) ?>
+                        </span>
+                    </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
                             <a href="<?= BASE_URL ?>/invoices/view.php?id=<?= $row['id'] ?>" class="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors" title="View">
@@ -112,7 +127,7 @@ $res = mysqli_query($conn, $sql);
                 </tr>
                 <?php endwhile; ?>
                 <?php if(mysqli_num_rows($res) == 0): ?>
-                    <tr><td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                    <tr><td colspan="8" class="px-6 py-12 text-center text-gray-500">
                         <div class="flex flex-col items-center">
                             <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
                                 <i data-lucide="inbox" class="w-6 h-6 text-gray-400"></i>
