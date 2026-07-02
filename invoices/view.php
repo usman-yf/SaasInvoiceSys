@@ -200,7 +200,7 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error') $zColor = 'red';
                     </div>
                     <?php if (!empty($invoice['qr_code_tlv'])): ?>
                     <div class="inline-block p-2 border border-gray-100 rounded-xl bg-white shadow-sm text-center">
-                        <div id="zatca-qr-container" class="w-20 h-20 mb-1 mx-auto flex items-center justify-center" data-qr="<?= htmlspecialchars($invoice['qr_code_tlv']) ?>"></div>
+                        <div id="zatca-qr-container" class="w-24 h-24 mb-1 mx-auto flex items-center justify-center overflow-hidden" data-qr="<?= htmlspecialchars($invoice['qr_code_tlv']) ?>"></div>
                         <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">ZATCA QR</span>
                     </div>
                     <?php endif; ?>
@@ -478,12 +478,18 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error') $zColor = 'red';
             if (qrData) {
                 new QRCode(qrContainer, {
                     text: qrData,
-                    width: 80,
-                    height: 80,
+                    width: 256,
+                    height: 256,
                     colorDark : "#000000",
                     colorLight : "#ffffff",
                     correctLevel : QRCode.CorrectLevel.M
                 });
+                
+                // Scale it down via CSS so it fits nicely but retains high resolution
+                var canvas = qrContainer.querySelector('canvas');
+                var img = qrContainer.querySelector('img');
+                if(canvas) { canvas.style.width = '100%'; canvas.style.height = '100%'; }
+                if(img) { img.style.width = '100%'; img.style.height = '100%'; }
             }
         }
     });
