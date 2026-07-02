@@ -41,8 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $csr = $crypto->generateCsr($privateKey, $companyData);
     
     // Save to settings
-    update_setting($conn, 'zatca_private_key', $privateKey);
-    update_setting($conn, 'zatca_csr', $csr);
+    set_setting($conn, 'zatca_private_key', $privateKey);
+    set_setting($conn, 'zatca_csr', $csr);
     
     logActivity($conn, $_SESSION['user_id'], 'ZATCA Setup', 'Generated new ECDSA Private Key and CSR');
     
