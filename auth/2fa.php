@@ -3,6 +3,7 @@
 session_start();
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/mailer.php';
 
 // Ensure user is in the 2FA flow
 if (!isset($_SESSION['pending_2fa_user'])) {
