@@ -144,6 +144,7 @@ require_once __DIR__ . '/../includes/header.php';
             <!-- Customer Details Card (Animated) -->
             <div id="customerDetailsWrapper" class="max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out mt-0">
                 <div class="bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-brand-200 p-4 shadow-sm mt-4">
+                  <div id="customerDetailsInner" class="transition-opacity duration-300 ease-in-out">
                     <h4 class="text-sm font-bold text-gray-900 mb-3 flex items-center">
                         <i data-lucide="user-check" class="w-5 h-5 mr-2 text-brand-500"></i> Selected Customer Details
                     </h4>
@@ -169,6 +170,7 @@ require_once __DIR__ . '/../includes/header.php';
                             <span id="cd_address" class="font-medium text-gray-600 leading-relaxed"></span>
                         </div>
                     </div>
+                  </div>
                 </div>
             </div>
             
@@ -177,30 +179,41 @@ require_once __DIR__ . '/../includes/header.php';
                 document.addEventListener('DOMContentLoaded', function() {
                     const customerSelect = document.querySelector('select[name="customer_id"]');
                     const wrapper = document.getElementById('customerDetailsWrapper');
+                    const innerCard = document.getElementById('customerDetailsInner');
                     
                     function updateCustomerDetails() {
                         const id = customerSelect.value;
                         if (id && customersData[id]) {
                             const c = customersData[id];
-                            document.getElementById('cd_email').textContent = c.email || 'N/A';
-                            document.getElementById('cd_phone').textContent = c.phone || 'N/A';
-                            document.getElementById('cd_vat').textContent = c.vat_number || 'N/A';
-                            document.getElementById('cd_cr').textContent = c.cr_number || 'N/A';
                             
-                            // Build address
-                            let addrParts = [];
-                            if(c.building_no) addrParts.push(c.building_no);
-                            if(c.street) addrParts.push(c.street);
-                            if(c.district) addrParts.push(c.district);
-                            if(c.city) addrParts.push(c.city);
-                            if(c.postal_code) addrParts.push(c.postal_code);
-                            if(c.country) addrParts.push(c.country);
+                            // Fade out text first if card is already open
+                            const isAlreadyOpen = !wrapper.classList.contains('max-h-0');
+                            if (isAlreadyOpen) {
+                                innerCard.classList.add('opacity-0');
+                            }
                             
-                            document.getElementById('cd_address').textContent = addrParts.length > 0 ? addrParts.join(', ') : (c.address || 'N/A');
-                            
-                            // Show wrapper
-                            wrapper.classList.remove('max-h-0', 'opacity-0', 'mt-0');
-                            wrapper.classList.add('max-h-[500px]', 'opacity-100');
+                            setTimeout(() => {
+                                document.getElementById('cd_email').textContent = c.email || 'N/A';
+                                document.getElementById('cd_phone').textContent = c.phone || 'N/A';
+                                document.getElementById('cd_vat').textContent = c.vat_number || 'N/A';
+                                document.getElementById('cd_cr').textContent = c.cr_number || 'N/A';
+                                
+                                // Build address
+                                let addrParts = [];
+                                if(c.building_no) addrParts.push(c.building_no);
+                                if(c.street) addrParts.push(c.street);
+                                if(c.district) addrParts.push(c.district);
+                                if(c.city) addrParts.push(c.city);
+                                if(c.postal_code) addrParts.push(c.postal_code);
+                                if(c.country) addrParts.push(c.country);
+                                
+                                document.getElementById('cd_address').textContent = addrParts.length > 0 ? addrParts.join(', ') : (c.address || 'N/A');
+                                
+                                // Show wrapper & fade text back in
+                                wrapper.classList.remove('max-h-0', 'opacity-0', 'mt-0');
+                                wrapper.classList.add('max-h-[500px]', 'opacity-100');
+                                innerCard.classList.remove('opacity-0');
+                            }, isAlreadyOpen ? 250 : 0);
                         } else {
                             // Hide wrapper
                             wrapper.classList.add('max-h-0', 'opacity-0', 'mt-0');
