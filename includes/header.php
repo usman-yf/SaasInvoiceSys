@@ -178,6 +178,11 @@ $preloader_duration = get_setting($conn, 'preloader_duration', '500');
                 <span class="sidebar-text truncate">Reports</span>
             </a>
 
+            <a href="<?= BASE_URL ?>/logs.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/logs.php') !== false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
+                <i data-lucide="activity" class="w-5 h-5 mr-3 shrink-0 <?= (strpos($_SERVER['REQUEST_URI'], '/logs.php') !== false) ? 'text-brand-600' : 'text-gray-400' ?>"></i>
+                <span class="sidebar-text truncate">System Logs</span>
+            </a>
+
             <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
             <p id="admin-label" class="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2 truncate">Administration</p>
             <a href="<?= BASE_URL ?>/users/list.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/users/') !== false && strpos($_SERVER['REQUEST_URI'], 'profile.php') === false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
@@ -187,10 +192,6 @@ $preloader_duration = get_setting($conn, 'preloader_duration', '500');
             <a href="<?= BASE_URL ?>/settings.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/settings.php') !== false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
                 <i data-lucide="settings" class="w-5 h-5 mr-3 shrink-0 <?= (strpos($_SERVER['REQUEST_URI'], '/settings.php') !== false) ? 'text-brand-600' : 'text-gray-400' ?>"></i>
                 <span class="sidebar-text truncate">Settings</span>
-            </a>
-            <a href="<?= BASE_URL ?>/logs.php" class="flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 <?= (strpos($_SERVER['REQUEST_URI'], '/logs.php') !== false) ? 'bg-brand-50 text-brand-700 font-medium' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' ?>">
-                <i data-lucide="activity" class="w-5 h-5 mr-3 shrink-0 <?= (strpos($_SERVER['REQUEST_URI'], '/logs.php') !== false) ? 'text-brand-600' : 'text-gray-400' ?>"></i>
-                <span class="sidebar-text truncate">System Logs</span>
             </a>
             <?php endif; ?>
         </nav>

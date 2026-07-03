@@ -68,8 +68,12 @@ $overdue_count = (int)($overdue_data['cnt'] ?? 0);
 $overdue_amount = (float)($overdue_data['sum'] ?? 0);
 
 // Activity Stream
-$activities = mysqli_query($conn, "SELECT * FROM notifications ORDER BY created_at DESC LIMIT 6");
-
+$user_id = (int)($_SESSION['user_id'] ?? 0);
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    $activities = mysqli_query($conn, "SELECT action as title, details as message, created_at FROM activity_logs ORDER BY created_at DESC LIMIT 6");
+} else {
+    $activities = mysqli_query($conn, "SELECT action as title, details as message, created_at FROM activity_logs WHERE user_id = $user_id ORDER BY created_at DESC LIMIT 6");
+}
 // Top Customers
 $top_customers = mysqli_query($conn, "
     SELECT c.name, c.email, SUM(i.total) as total_revenue

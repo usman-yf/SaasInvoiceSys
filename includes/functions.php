@@ -83,7 +83,7 @@ function logActivity($conn, $user_id, $action, $details = '')
     $sql = "INSERT INTO activity_logs (user_id, action, details) VALUES ('$user_id', '$action_clean', '$details_clean')";
     $result = mysqli_query($conn, $sql);
 
-    // Create a notification for admins about this activity
+    // Create a notification for admins and the actor about this activity
     if ($result && $user_id) {
         $msg = $action_clean . ": " . $details_clean;
 
@@ -99,7 +99,11 @@ function logActivity($conn, $user_id, $action, $details = '')
             }
         }
 
-        $admin_res = mysqli_query($conn, "SELECT id FROM users WHERE role = 'admin'");
+        // Notify the actor themselves
+        addNotification($conn, $user_id, $title, $desc);
+
+        // Notify admins (except the actor, since they just got one)
+        $admin_res = mysqli_query($conn, "SELECT id FROM users WHERE role = 'admin' AND id != $user_id");
         if ($admin_res) {
             while ($admin = mysqli_fetch_assoc($admin_res)) {
                 addNotification($conn, $admin['id'], $title, $desc);

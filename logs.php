@@ -5,14 +5,18 @@ require_once __DIR__ . '/includes/functions.php';
 
 checkAuth();
 
-// Only allow admin access
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+// Only allow authenticated users
+if (!isset($_SESSION['user_id'])) {
     redirect(BASE_URL . '/index.php');
 }
 
-// Handle Clear All Logs
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'clear_all') {
-    mysqli_query($conn, "TRUNCATE TABLE activity_logs");
+    if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+        mysqli_query($conn, "TRUNCATE TABLE activity_logs");
+    } else {
+        $uid = (int)$_SESSION['user_id'];
+        mysqli_query($conn, "DELETE FROM activity_logs WHERE user_id = $uid");
+    }
     $success_msg = "All logs have been cleared successfully.";
 }
 
@@ -24,6 +28,11 @@ $start_date = isset($_GET['start_date']) ? sanitize($conn, $_GET['start_date']) 
 $end_date = isset($_GET['end_date']) ? sanitize($conn, $_GET['end_date']) : '';
 
 $where_clause = "WHERE 1=1";
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    $uid = (int)$_SESSION['user_id'];
+    $where_clause .= " AND l.user_id = $uid";
+}
+
 if ($start_date) {
     $where_clause .= " AND l.created_at >= '$start_date 00:00:00'";
 }
