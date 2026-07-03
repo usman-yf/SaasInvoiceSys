@@ -73,7 +73,7 @@ if (mysqli_num_rows($res) > 0) {
     <div class="container mx-auto px-4 max-w-4xl relative z-10">
         <?php if (mysqli_num_rows($res) == 0): ?>
             <!-- Premium Error Card -->
-            <div class="relative bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-red-100 mb-10 overflow-hidden hide-on-print group w-full">
+            <div class="relative bg-white rounded-3xl shadow-[0_8px_10px_rgb(0,0,0,0.06)] border border-red-100 mb-10 overflow-hidden hide-on-print group w-full">
                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-500 via-rose-500 to-red-500"></div>
                 <div class="absolute -right-20 -top-20 w-64 h-64 bg-red-50 rounded-full blur-3xl opacity-60 pointer-events-none transition-transform duration-1000 group-hover:scale-110"></div>
                 
@@ -109,7 +109,7 @@ if (mysqli_num_rows($res) > 0) {
         ?>
             
             <!-- Premium Success Hero Card -->
-            <div class="relative bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100/80 mb-10 overflow-hidden hide-on-print group w-full">
+            <div class="relative bg-white rounded-3xl shadow-[0_8px_10px_rgb(0,0,0,0.06)] border border-gray-100/80 mb-10 overflow-hidden hide-on-print group w-full">
                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-green-400 via-emerald-500 to-green-500"></div>
                 
                 <div class="absolute -right-20 -top-20 w-64 h-64 bg-green-50 rounded-full blur-3xl opacity-60 pointer-events-none transition-transform duration-1000 group-hover:scale-110"></div>

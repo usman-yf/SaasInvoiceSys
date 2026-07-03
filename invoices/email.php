@@ -138,7 +138,7 @@ while ($item = mysqli_fetch_assoc($items_res)) {
 }
 
 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-$veri_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . BASE_URL . "/verify.php?token=" . urlencode($invoice['token']) . "&inv=" . urlencode($invoice['invoice_no']);
+$veri_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . BASE_URL . "/verify.php?token=" . urlencode($invoice['token']);
 $qr_api_url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&ecc=L&data=" . urlencode($veri_url);
 
 $body .= "

@@ -223,7 +223,7 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error')
                         within 14 days of receiving this invoice.</p>
                     <?php
                     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-                    $veri_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . BASE_URL . "/verify.php?token=" . urlencode($invoice['token']) . "&inv=" . urlencode($invoice['invoice_no']);
+                    $veri_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . BASE_URL . "/verify.php?token=" . urlencode($invoice['token']);
                     $qr_api_url = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&ecc=H&data=" . urlencode($veri_url);
                     ?>
                     <div class="flex space-x-4">
