@@ -58,10 +58,14 @@ function sendVerificationEmail($to, $name, $token, $expire_mins = 1440)
                             
                             <tr>
                                 <td style='padding: 48px 40px 32px 40px; text-align: center; border-bottom: 1px solid #f3f4f6;'>
-                                    <div style='display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); margin-bottom: 24px; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);'>
-                                        <!-- Minimal Logo Placeholder -->
-                                        <span style='color: white; font-weight: bold; font-size: 24px; font-family: ui-sans-serif, system-ui; letter-spacing: -1px;'>I</span>
-                                    </div>
+                                    <table cellpadding='0' cellspacing='0' border='0' align='center' style='margin-bottom: 24px;'>
+                                        <tr>
+                                            <td align='center' valign='middle' width='48' height='48' style='width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); background-color: #7c3aed; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); text-align: center;'>
+                                                <!-- Minimal Logo Placeholder -->
+                                                <span style='color: white; font-weight: bold; font-size: 24px; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif; mso-line-height-rule: exactly; line-height: 48px;'>I</span>
+                                            </td>
+                                        </tr>
+                                    </table>
                                     <h1 style='color: #111827; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.02em;'>Welcome to InvSys!</h1>
                                 </td>
                             </tr>
