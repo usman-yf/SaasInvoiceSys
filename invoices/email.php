@@ -139,7 +139,10 @@ while ($item = mysqli_fetch_assoc($items_res)) {
 
 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
 $veri_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . BASE_URL . "/verify.php?token=" . urlencode($invoice['token']);
-$qr_api_url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&ecc=L&data=" . urlencode($veri_url);
+
+$qr_size = htmlspecialchars(get_setting($conn, 'qr_code_size', '400'));
+$qr_ecc = htmlspecialchars(get_setting($conn, 'qr_code_ecc', 'H'));
+$qr_api_url = "https://api.qrserver.com/v1/create-qr-code/?size={$qr_size}x{$qr_size}&ecc={$qr_ecc}&data=" . urlencode($veri_url);
 
 $body .= "
         </tbody>

@@ -26,7 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         mysqli_begin_transaction($conn);
         try {
             // Insert Invoice
-            $token = bin2hex(random_bytes(20));
+            $token_length = (int) get_setting($conn, 'verification_token_length', '40');
+            $byte_length = max(20, (int)($token_length / 2)); // Minimum 20 bytes (40 hex chars)
+            $token = bin2hex(random_bytes($byte_length));
+            
             $sql = "INSERT INTO invoices (invoice_no, customer_id, date, subtotal, tax, discount, total, status, token) 
                     VALUES ('$invoice_no', $customer_id, '$date', $subtotal, $tax_total, $discount, $total, 'Unpaid', '$token')";
 

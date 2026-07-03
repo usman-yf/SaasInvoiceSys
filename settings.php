@@ -60,6 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['mail_settings_update'
         'company_branch',
         'zatca_device_uuid',
         'email_verify_expire_minutes',
+        'verification_token_length',
+        'qr_code_size',
+        'qr_code_ecc',
         'currency',
         'toast_position',
         'toast_duration',
@@ -92,6 +95,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['mail_settings_update'
         'company_branch' => 'Main',
         'zatca_device_uuid' => '',
         'email_verify_expire_minutes' => '1440',
+        'verification_token_length' => '40',
+        'qr_code_size' => '400',
+        'qr_code_ecc' => 'H',
         'currency' => 'SAR',
         'toast_position' => 'top-right',
         'toast_duration' => '3000',
@@ -158,6 +164,9 @@ $zatca_csr = get_setting($conn, 'zatca_csr', '');
 $zatca_api_secret = get_setting($conn, 'zatca_api_secret', '');
 // Settings fetched here
 $email_verify_expire_minutes = get_setting($conn, 'email_verify_expire_minutes', '1440');
+$verification_token_length = get_setting($conn, 'verification_token_length', '40');
+$qr_code_size = get_setting($conn, 'qr_code_size', '400');
+$qr_code_ecc = get_setting($conn, 'qr_code_ecc', 'H');
 $currency = get_setting($conn, 'currency', 'Rs');
 $toast_position = get_setting($conn, 'toast_position', 'top-right');
 $toast_duration = get_setting($conn, 'toast_duration', '3000');
@@ -541,6 +550,44 @@ require_once __DIR__ . '/includes/header.php';
                                     required>
                                 <p class="mt-2 text-sm text-gray-500">How long until a verification link becomes
                                     invalid. Default is 1440 mins (24h).</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                    Invoice Verification Token Length (Characters)
+                                    <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400"
+                                        title="The number of characters for dynamically generated secure invoice tokens. Minimum 40, Maximum 128."></i>
+                                </label>
+                                <input type="number" name="verification_token_length"
+                                    class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-red-500 focus:border-red-500 block p-3 transition-colors outline-none shadow-sm"
+                                    value="<?= htmlspecialchars($verification_token_length) ?>" min="40" max="128" step="2"
+                                    required>
+                                <p class="mt-2 text-sm text-gray-500">Determines the complexity of the invoice verification URL token.</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                    Verification QR Code Size (px)
+                                    <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400"
+                                        title="The dimensions (width and height) of the generated QR code."></i>
+                                </label>
+                                <input type="number" name="qr_code_size"
+                                    class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-red-500 focus:border-red-500 block p-3 transition-colors outline-none shadow-sm"
+                                    value="<?= htmlspecialchars($qr_code_size) ?>" min="100" max="1000" step="50"
+                                    required>
+                                <p class="mt-2 text-sm text-gray-500">For example, 400 means 400x400 pixels.</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                    QR Code Error Correction Level
+                                    <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400"
+                                        title="Higher levels increase reliability if the code is damaged, but make the code visually denser."></i>
+                                </label>
+                                <select name="qr_code_ecc"
+                                    class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-red-500 focus:border-red-500 block p-3 transition-colors outline-none shadow-sm">
+                                    <option value="L" <?= $qr_code_ecc === 'L' ? 'selected' : '' ?>>L (Low - 7% damage recovery)</option>
+                                    <option value="M" <?= $qr_code_ecc === 'M' ? 'selected' : '' ?>>M (Medium - 15% damage recovery)</option>
+                                    <option value="Q" <?= $qr_code_ecc === 'Q' ? 'selected' : '' ?>>Q (Quartile - 25% damage recovery)</option>
+                                    <option value="H" <?= $qr_code_ecc === 'H' ? 'selected' : '' ?>>H (High - 30% damage recovery)</option>
+                                </select>
                             </div>
                         </div>
                     </div>
