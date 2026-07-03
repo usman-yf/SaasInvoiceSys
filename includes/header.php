@@ -31,6 +31,15 @@ $preloader_duration = get_setting($conn, 'preloader_duration', '500');
             darkMode: 'class',
             theme: {
                 extend: {
+                    animation: {
+                        'auto-float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-4px)' },
+                        }
+                    },
                     colors: {
                         brand: {
                             50: '#f5f3ff',
