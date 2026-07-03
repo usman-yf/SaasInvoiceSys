@@ -57,8 +57,8 @@ function sendVerificationEmail($to, $name, $token, $expire_mins = 1440)
                             <tr>
                                 <td align='center' style='background-color: #7c3aed; padding: 40px 20px; border-bottom: 4px solid #5b21b6;'>
                                     <!-- A modern icon could be placed here. For now, text -->
-                                    <h1 style='color: #ffffff; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;'>Security Verification</h1>
-                                    <p style='color: #ddd6fe; margin: 10px 0 0 0; font-size: 15px;'>Secure your InvSys account</p>
+                                    <h1 style='color: #ffffff; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;'>Email Verification</h1>
+                                    <p style='color: #ddd6fe; margin: 10px 0 0 0; font-size: 15px;'>Please confirm your email address</p>
                                 </td>
                             </tr>
                             
@@ -67,9 +67,9 @@ function sendVerificationEmail($to, $name, $token, $expire_mins = 1440)
                                     <h2 style='color: #1e293b; font-size: 22px; margin-top: 0; font-weight: 700;'>Welcome to InvSys, " . htmlspecialchars($name) . "!</h2>
                                     <p>Your profile has been successfully generated. To unlock full access to your dashboard, we just need to quickly verify your email address to ensure your account's security.</p>
                                     
-                                    <div style='background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 16px 20px; border-radius: 6px; color: #991b1b; margin: 30px 0; font-size: 15px;'>
-                                        <strong style='color: #7f1d1d;'>Action Required:</strong> 
-                                        This secure link will safely expire in <strong>" . $expire_text . "</strong>.
+                                    <div style='background-color: #f1f5f9; border-left: 4px solid #7c3aed; padding: 16px 20px; border-radius: 6px; color: #334155; margin: 30px 0; font-size: 15px;'>
+                                        <strong style='color: #1e293b;'>Security Notice:</strong> 
+                                        For your protection, this verification link will expire in <strong>" . $expire_text . "</strong>.
                                     </div>
 
                                     <div style='text-align: center; margin: 40px 0;'>

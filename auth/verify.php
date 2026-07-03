@@ -75,33 +75,58 @@ if ($status == 'error') {
 }
 ?>
 
-<div class="flex items-center justify-center min-h-screen w-full bg-gray-50">
-    <div class="w-full max-w-lg">
-        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 text-center overflow-hidden">
-            <div class="p-8 sm:p-12">
-                <div class="mb-6 flex justify-center">
-                    <div class="w-24 h-24 rounded-full bg-<?= $twColor ?>-50 flex items-center justify-center">
-                        <i data-lucide="<?= $twIcon ?>" class="w-12 h-12 text-<?= $twColor ?>-500"></i>
+<div class="flex items-center justify-center min-h-screen w-full bg-slate-50 relative overflow-hidden">
+    <!-- Premium background blobs -->
+    <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-brand-100/50 blur-3xl opacity-50 pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-blue-100/50 blur-3xl opacity-50 pointer-events-none"></div>
+
+    <div class="w-full max-w-md px-4 relative z-10 animate-fade-in-up">
+        <div class="bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] border border-white text-center overflow-hidden">
+            <div class="p-10 sm:p-12">
+                <div class="mb-8 relative flex justify-center">
+                    <div class="absolute inset-0 bg-<?= $twColor ?>-200 rounded-full blur-xl opacity-40 animate-pulse"></div>
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-<?= $twColor ?>-50 to-white flex items-center justify-center shadow-inner relative z-10 border border-<?= $twColor ?>-100/50">
+                        <i data-lucide="<?= $twIcon ?>" class="w-10 h-10 text-<?= $twColor ?>-500 drop-shadow-sm"></i>
                     </div>
                 </div>
                 
-                <h3 class="text-2xl font-bold text-gray-900 mb-3"><?= ucfirst($status) ?></h3>
-                <p class="text-gray-500 text-lg mb-8"><?= htmlspecialchars($message) ?></p>
+                <h3 class="text-2xl font-extrabold text-slate-800 mb-3 tracking-tight"><?= ucfirst($status) ?></h3>
+                <p class="text-slate-500 text-base leading-relaxed mb-10"><?= htmlspecialchars($message) ?></p>
                 
                 <div>
-                    <a href="<?= BASE_URL ?>/auth/login.php" class="inline-flex items-center justify-center px-6 py-3 rounded-xl font-medium text-white bg-brand-600 hover:bg-brand-700 shadow-sm hover:shadow transition-all group">
-                        <i data-lucide="log-in" class="w-5 h-5 mr-2"></i> Go to Login
+                    <a href="<?= BASE_URL ?>/auth/login.php" class="inline-flex items-center justify-center w-full px-6 py-3.5 rounded-2xl font-semibold text-white bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 shadow-[0_4px_14px_0_rgba(124,58,237,0.39)] hover:shadow-[0_6px_20px_rgba(124,58,237,0.23)] hover:-translate-y-0.5 transition-all duration-200 group">
+                        <i data-lucide="log-in" class="w-5 h-5 mr-2 group-hover:animate-pulse"></i> Continue to Login
                     </a>
                 </div>
             </div>
             
             <?php if($status !== 'success' && $status !== 'info'): ?>
-            <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 flex items-center justify-center text-sm text-gray-500">
-                <i data-lucide="shield" class="w-4 h-4 mr-1.5 text-gray-400"></i> InvSys Security System
+            <div class="bg-slate-50/50 backdrop-blur-md px-6 py-4 border-t border-slate-100 flex items-center justify-center text-xs font-medium text-slate-500">
+                <i data-lucide="shield-alert" class="w-4 h-4 mr-1.5 text-slate-400"></i> InvSys Security Protocol
+            </div>
+            <?php else: ?>
+            <div class="bg-slate-50/50 backdrop-blur-md px-6 py-4 border-t border-slate-100 flex items-center justify-center text-xs font-medium text-slate-500">
+                <i data-lucide="shield-check" class="w-4 h-4 mr-1.5 text-green-500"></i> Verified by InvSys Security
             </div>
             <?php endif; ?>
         </div>
     </div>
 </div>
+
+<style>
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.animate-fade-in-up {
+    animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+</style>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

@@ -151,11 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleBtn.addEventListener('click', function() {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
-            if (type === 'password') {
-                eyeIcon.setAttribute('data-lucide', 'eye');
-            } else {
-                eyeIcon.setAttribute('data-lucide', 'eye-off');
-            }
+            toggleBtn.innerHTML = type === 'password' ? '<i data-lucide="eye" class="w-4 h-4" id="eyeIcon"></i>' : '<i data-lucide="eye-off" class="w-4 h-4" id="eyeIcon"></i>';
             lucide.createIcons();
         });
     }
