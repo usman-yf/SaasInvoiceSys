@@ -273,6 +273,8 @@ $preloader_duration = get_setting($conn, 'preloader_duration', '500');
                                         $n_icon = 'shield-alert'; $n_color = 'text-red-600'; $n_bg = 'bg-red-50'; 
                                     } elseif(strpos($t_lower, 'user') !== false || strpos($t_lower, 'login') !== false) { 
                                         $n_icon = 'user-cog'; $n_color = 'text-cyan-600'; $n_bg = 'bg-cyan-50'; 
+                                    } elseif(strpos($t_lower, 'resent') !== false) { 
+                                        $n_icon = 'send'; $n_color = 'text-indigo-600'; $n_bg = 'bg-indigo-50'; 
                                     } elseif(strpos($t_lower, 'setting') !== false) { 
                                         $n_icon = 'settings'; $n_color = 'text-slate-600'; $n_bg = 'bg-slate-100'; 
                                     } elseif(strpos($t_lower, 'zatca') !== false) { 
