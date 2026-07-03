@@ -70,9 +70,9 @@ $overdue_amount = (float)($overdue_data['sum'] ?? 0);
 // Activity Stream
 $user_id = (int)($_SESSION['user_id'] ?? 0);
 if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
-    $activities = mysqli_query($conn, "SELECT action as title, details as message, created_at FROM activity_logs ORDER BY created_at DESC LIMIT 6");
+    $activities = mysqli_query($conn, "SELECT action as title, details as message, created_at FROM activity_logs ORDER BY created_at DESC LIMIT 15");
 } else {
-    $activities = mysqli_query($conn, "SELECT action as title, details as message, created_at FROM activity_logs WHERE user_id = $user_id ORDER BY created_at DESC LIMIT 6");
+    $activities = mysqli_query($conn, "SELECT action as title, details as message, created_at FROM activity_logs WHERE user_id = $user_id ORDER BY created_at DESC LIMIT 15");
 }
 // Top Customers
 $top_customers = mysqli_query($conn, "
@@ -458,7 +458,7 @@ while($crow = mysqli_fetch_assoc($cres)) {
         <div class="p-6 border-b border-gray-100 flex justify-between items-center">
             <h3 class="text-lg font-bold text-gray-900">Recent Activity</h3>
         </div>
-        <div class="p-6">
+        <div class="p-6 max-h-[320px] overflow-y-auto">
             <div class="space-y-6">
                 <?php if (mysqli_num_rows($activities) > 0): ?>
                     <?php while($act = mysqli_fetch_assoc($activities)): 
