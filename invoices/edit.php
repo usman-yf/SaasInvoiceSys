@@ -145,8 +145,9 @@ require_once __DIR__ . '/../includes/header.php';
             <div id="customerDetailsWrapper" class="max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out mt-0">
                 <div class="bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-brand-200 p-4 shadow-sm mt-4">
                   <div id="customerDetailsInner" class="transition-opacity duration-300 ease-in-out">
-                    <h4 class="text-sm font-bold text-gray-900 mb-3 flex items-center">
+                    <h4 class="text-sm font-bold text-gray-900 mb-3 flex items-center w-full">
                         <i data-lucide="user-check" class="w-5 h-5 mr-2 text-brand-500"></i> Selected Customer Details
+                        <span id="zatca_route_badge" class="hidden"></span>
                     </h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div>
@@ -208,6 +209,17 @@ require_once __DIR__ . '/../includes/header.php';
                                 if(c.country) addrParts.push(c.country);
                                 
                                 document.getElementById('cd_address').textContent = addrParts.length > 0 ? addrParts.join(', ') : (c.address || 'N/A');
+                                
+                                const badge = document.getElementById('zatca_route_badge');
+                                const isStandard = c.vat_number && c.vat_number.trim().length === 15;
+                                if (isStandard) {
+                                    badge.className = "ml-auto px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200 uppercase tracking-wider flex items-center shadow-sm";
+                                    badge.innerHTML = '<i data-lucide="shield-check" class="w-3 h-3 mr-1"></i> Standard (B2B)';
+                                } else {
+                                    badge.className = "ml-auto px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200 uppercase tracking-wider flex items-center shadow-sm";
+                                    badge.innerHTML = '<i data-lucide="zap" class="w-3 h-3 mr-1"></i> Simplified (B2C)';
+                                }
+                                if (window.lucide) { window.lucide.createIcons(); }
                                 
                                 // Show wrapper & fade text back in
                                 wrapper.classList.remove('max-h-0', 'opacity-0', 'mt-0');
