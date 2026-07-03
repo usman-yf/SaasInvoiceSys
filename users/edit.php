@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const eyeIcon = document.getElementById('eyeIcon');
     const checklist = document.getElementById('passwordChecklist');
     
-    if (toggleBtn && passwordInput && eyeIcon) {
+    if (toggleBtn && passwordInput) {
         toggleBtn.addEventListener('click', function() {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);

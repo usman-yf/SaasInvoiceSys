@@ -47,6 +47,8 @@ function sendVerificationEmail($to, $name, $token, $expire_mins = 1440)
         <html>
         <head>
             <meta charset='utf-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>Email Verification</title>
         </head>
         <body style='font-family: \"Inter\", Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 0;'>
             <table width='100%' cellpadding='0' cellspacing='0' border='0' style='background-color: #f8fafc; padding: 50px 0; width: 100%;'>
@@ -56,30 +58,24 @@ function sendVerificationEmail($to, $name, $token, $expire_mins = 1440)
                             
                             <tr>
                                 <td align='center' style='background-color: #7c3aed; padding: 40px 20px; border-bottom: 4px solid #5b21b6;'>
-                                    <!-- A modern icon could be placed here. For now, text -->
-                                    <h1 style='color: #ffffff; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;'>Email Verification</h1>
-                                    <p style='color: #ddd6fe; margin: 10px 0 0 0; font-size: 15px;'>Please confirm your email address</p>
+                                    <h1 style='color: #ffffff; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;'>Welcome to InvSys!</h1>
                                 </td>
                             </tr>
                             
                             <tr>
                                 <td style='padding: 40px; color: #475569; line-height: 1.7; font-size: 16px;'>
-                                    <h2 style='color: #1e293b; font-size: 22px; margin-top: 0; font-weight: 700;'>Welcome to InvSys, " . htmlspecialchars($name) . "!</h2>
-                                    <p>Your profile has been successfully generated. To unlock full access to your dashboard, we just need to quickly verify your email address to ensure your account's security.</p>
-                                    
-                                    <div style='background-color: #f1f5f9; border-left: 4px solid #7c3aed; padding: 16px 20px; border-radius: 6px; color: #334155; margin: 30px 0; font-size: 15px;'>
-                                        <strong style='color: #1e293b;'>Security Notice:</strong> 
-                                        For your protection, this verification link will expire in <strong>" . $expire_text . "</strong>.
-                                    </div>
+                                    <h2 style='color: #1e293b; font-size: 22px; margin-top: 0; font-weight: 700;'>Hi " . htmlspecialchars($name) . ",</h2>
+                                    <p>We're excited to have you on board. Your account has been created successfully.</p>
+                                    <p>To get started, please click the button below to confirm your email address. This helps us keep your account safe.</p>
 
                                     <div style='text-align: center; margin: 40px 0;'>
-                                        <a href='" . $verifyLink . "' style='display: inline-block; background-color: #7c3aed; color: #ffffff; text-decoration: none; padding: 16px 36px; border-radius: 12px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.2);'>Verify Email Address</a>
+                                        <a href='" . $verifyLink . "' style='display: inline-block; background-color: #7c3aed; color: #ffffff; text-decoration: none; padding: 16px 36px; border-radius: 12px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.2);'>Confirm Email Address</a>
                                     </div>
 
-                                    <p style='color: #64748b; font-size: 14px;'>If you did not request this account or receive this in error, you can safely ignore this email.</p>
+                                    <p style='color: #64748b; font-size: 14px;'>This link will expire in " . $expire_text . ". If you did not sign up for this account, you can safely ignore this message.</p>
                                     
                                     <div style='word-break: break-all; font-size: 13px; color: #94a3b8; margin-top: 30px; border-top: 1px solid #f1f5f9; padding-top: 20px;'>
-                                        If the button above does not work, copy and paste this link manually:<br>
+                                        Having trouble with the button? Copy and paste this link into your browser:<br>
                                         <a href='" . $verifyLink . "' style='color: #7c3aed; text-decoration: none; margin-top: 5px; display: inline-block;'>" . $verifyLink . "</a>
                                     </div>
                                 </td>
