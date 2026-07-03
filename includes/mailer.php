@@ -58,7 +58,7 @@ function sendVerificationEmail($to, $name, $token, $expire_mins = 1440)
                             
                             <tr>
                                 <td style='padding: 48px 40px 32px 40px; text-align: center; border-bottom: 1px solid #f3f4f6;'>
-                                    <div style='display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); margin-bottom: 24px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);'>
+                                    <div style='display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); margin-bottom: 24px; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);'>
                                         <!-- Minimal Logo Placeholder -->
                                         <span style='color: white; font-weight: bold; font-size: 24px; font-family: ui-sans-serif, system-ui; letter-spacing: -1px;'>I</span>
                                     </div>
@@ -73,7 +73,7 @@ function sendVerificationEmail($to, $name, $token, $expire_mins = 1440)
                                     <p style='margin-top: 0; margin-bottom: 32px;'>To secure your account and gain full access to your dashboard, please confirm your email address by clicking the button below.</p>
 
                                     <div style='text-align: center; margin: 32px 0;'>
-                                        <a href='" . $verifyLink . "' style='display: inline-block; background-color: #111827; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 15px; transition: background-color 0.2s;'>Confirm Email Address</a>
+                                        <a href='" . $verifyLink . "' style='display: inline-block; background-color: #7c3aed; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 15px; box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.2); transition: background-color 0.2s;'>Confirm Email Address</a>
                                     </div>
 
                                     <p style='color: #6b7280; font-size: 14px; margin-top: 32px; margin-bottom: 0;'>This secure link will expire in " . $expire_text . ".</p>
@@ -81,7 +81,7 @@ function sendVerificationEmail($to, $name, $token, $expire_mins = 1440)
                                     
                                     <div style='word-break: break-all; font-size: 12px; color: #9ca3af; margin-top: 40px; border-top: 1px solid #f3f4f6; padding-top: 24px;'>
                                         Having trouble clicking the button? Copy and paste this URL into your browser:<br>
-                                        <a href='" . $verifyLink . "' style='color: #6366f1; text-decoration: none; margin-top: 8px; display: inline-block; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;'>" . $verifyLink . "</a>
+                                        <a href='" . $verifyLink . "' style='color: #7c3aed; text-decoration: none; margin-top: 8px; display: inline-block; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;'>" . $verifyLink . "</a>
                                     </div>
                                 </td>
                             </tr>
