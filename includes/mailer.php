@@ -7,6 +7,12 @@ require_once __DIR__ . '/../lib/PHPMailer/src/SMTP.php';
 
 function sendVerificationEmail($to, $name, $token, $expire_mins = 1440)
 {
+    global $conn;
+    $company_name = 'InvoicePro';
+    if (isset($conn) && function_exists('get_setting')) {
+        $company_name = get_setting($conn, 'company_name', 'InvoicePro');
+    }
+    
     try {
         $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
 
@@ -30,7 +36,7 @@ function sendVerificationEmail($to, $name, $token, $expire_mins = 1440)
         $mail->addAddress($to, $name);
 
         $mail->isHTML(true);
-        $mail->Subject = 'Welcome to InvSys! Please confirm your email';
+        $mail->Subject = 'Welcome to ' . $company_name . '! Please confirm your email';
 
         $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
         $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
@@ -57,11 +63,11 @@ function sendVerificationEmail($to, $name, $token, $expire_mins = 1440)
                         <table width='100%' style='max-width: 520px; background-color: #ffffff; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); overflow: hidden; margin: 0 auto;' cellpadding='0' cellspacing='0' border='0'>
                             
                             <tr>
-                                <td style='padding: 32px 40px 24px 40px; text-align: center; border-bottom: 1px solid #f3f4f6;'>
-                                    <div style='margin-bottom: 16px;'>
-                                        <span style='color: #7c3aed; font-weight: 900; font-size: 28px; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif; letter-spacing: -0.5px;'>Invoice<span style='color: #111827;'>Pro</span></span>
+                                <td style='padding: 24px 32px 16px 32px; text-align: center; border-bottom: 1px solid #f3f4f6;'>
+                                    <div style='margin-bottom: 8px;'>
+                                        <span style='color: #7c3aed; font-weight: 900; font-size: 28px; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif; letter-spacing: -0.5px;'>" . htmlspecialchars($company_name) . "</span>
                                     </div>
-                                    <h1 style='color: #111827; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.02em;'>Welcome to InvoicePro!</h1>
+                                    <h1 style='color: #111827; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.02em;'>Welcome to " . htmlspecialchars($company_name) . "!</h1>
                                 </td>
                             </tr>
                             
@@ -94,7 +100,7 @@ function sendVerificationEmail($to, $name, $token, $expire_mins = 1440)
                         <table width='100%' style='max-width: 520px; margin: 0 auto;' cellpadding='0' cellspacing='0' border='0'>
                             <tr>
                                 <td align='center' style='padding: 24px 0; color: #9ca3af; font-size: 12px; line-height: 1.5;'>
-                                    &copy; " . date('Y') . " InvoicePro. All rights reserved.<br>
+                                    &copy; " . date('Y') . " " . htmlspecialchars($company_name) . ". All rights reserved.<br>
                                     This is an automated system message. Please do not reply directly to this email.
                                 </td>
                             </tr>
