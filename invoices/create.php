@@ -121,11 +121,11 @@ require_once __DIR__ . '/../includes/header.php';
             
             <!-- Customer Details Card (Animated) -->
             <div id="customerDetailsWrapper" class="max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out mt-0">
-                <div class="bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 p-6 shadow-sm mt-6">
-                    <h4 class="text-sm font-bold text-gray-900 mb-4 flex items-center">
-                        <i data-lucide="user-check" class="w-4 h-4 mr-2 text-brand-500"></i> Selected Customer Details
+                <div class="bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-brand-200 p-4 shadow-sm mt-4">
+                    <h4 class="text-sm font-bold text-gray-900 mb-3 flex items-center">
+                        <i data-lucide="user-check" class="w-5 h-5 mr-2 text-brand-500"></i> Selected Customer Details
                     </h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-sm">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div>
                             <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Email</span>
                             <span id="cd_email" class="font-semibold text-gray-800 truncate block"></span>
@@ -142,8 +142,8 @@ require_once __DIR__ . '/../includes/header.php';
                             <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">CR Number</span>
                             <span id="cd_cr" class="font-semibold text-gray-800 truncate block"></span>
                         </div>
-                        <div class="md:col-span-4 pt-4 border-t border-gray-100">
-                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Address & Location</span>
+                        <div class="md:col-span-4 pt-3 border-t border-brand-100">
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Address & Location</span>
                             <span id="cd_address" class="font-medium text-gray-600 leading-relaxed"></span>
                         </div>
                     </div>
