@@ -118,6 +118,106 @@ function sendVerificationEmail($to, $name, $token, $expire_mins = 1440)
         return $mail->send();
     } catch (\Exception $e) {
         error_log("Email sending failed to $to: " . $e->getMessage());
+    }
+}
+
+function send_2fa_email($email, $code)
+{
+    global $conn;
+    $company_name = 'InvoicePro';
+    $expire_mins = 10;
+    if (isset($conn) && function_exists('get_setting')) {
+        $company_name = get_setting($conn, 'company_name', 'InvoicePro');
+        $expire_mins = (int) get_setting($conn, '2fa_expiration_minutes', '10');
+    }
+    
+    try {
+        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+
+        $mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
+
+        $mail->isSMTP();
+        $mail->Host = MAIL_HOST;
+        $mail->SMTPAuth = true;
+        $mail->Username = MAIL_USERNAME;
+        $mail->Password = MAIL_PASSWORD;
+        $mail->SMTPSecure = MAIL_ENCRYPTION;
+        $mail->Port = MAIL_PORT;
+
+        $mail->setFrom(MAIL_FROM_ADDRESS, MAIL_FROM_NAME);
+        $mail->addAddress($email);
+
+        $mail->isHTML(true);
+        $mail->Subject = 'Your ' . $company_name . ' Security Code';
+
+        $body = "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='utf-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>Security Code</title>
+        </head>
+        <body style='font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; background-color: #f9fafb; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;'>
+            <table width='100%' cellpadding='0' cellspacing='0' border='0' style='background-color: #f9fafb; padding: 24px 16px; width: 100%;'>
+                <tr>
+                    <td align='center'>
+                        <table width='100%' style='max-width: 520px; background-color: #ffffff; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); overflow: hidden; margin: 0 auto;' cellpadding='0' cellspacing='0' border='0'>
+                            
+                            <tr>
+                                <td style='padding: 24px 32px 16px 32px; text-align: center; border-bottom: 1px solid #f3f4f6;'>
+                                    <div style='margin-bottom: 8px;'>
+                                        <span style='color: #7c3aed; font-weight: 900; font-size: 28px; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif; letter-spacing: -0.5px;'>" . htmlspecialchars($company_name) . "</span>
+                                    </div>
+                                    <h1 style='color: #111827; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.02em;'>Security Code</h1>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td style='padding: 24px 32px; color: #4b5563; line-height: 1.6; font-size: 15px;'>
+                                    <p style='margin-top: 0; margin-bottom: 16px; text-align: center;'>You recently attempted to sign in. To complete the login process, please enter the authentication code below.</p>
+                                    
+                                    <div style='background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 24px; margin-bottom: 24px; text-align: center;'>
+                                        <span style=\"font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: 36px; font-weight: 700; letter-spacing: 8px; color: #7c3aed; margin-left: 8px;\">
+                                            {$code}
+                                        </span>
+                                    </div>
+
+                                    <div style='background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 24px;'>
+                                        <p style='color: #475569; font-size: 14px; margin-top: 0; margin-bottom: 8px; font-weight: 500;'>This code will expire in " . $expire_mins . " minutes.</p>
+                                        <p style='color: #64748b; font-size: 13px; margin: 0; line-height: 1.5;'>If you didn't request this code, you can safely ignore this email.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <table width='100%' style='max-width: 520px; margin: 0 auto;' cellpadding='0' cellspacing='0' border='0'>
+                            <tr>
+                                <td align='center' style='padding: 16px 0; color: #9ca3af; font-size: 12px; line-height: 1.5;'>
+                                    &copy; " . date('Y') . " " . htmlspecialchars($company_name) . ". All rights reserved.<br>
+                                    This is an automated system message. Please do not reply directly to this email.
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>
+        ";
+
+        $mail->Body = $body;
+        $mail->AltBody = "Your authentication code is: $code";
+
+        return $mail->send();
+    } catch (\Exception $e) {
+        error_log("2FA Email sending failed to $email: " . $e->getMessage());
         return false;
     }
 }
