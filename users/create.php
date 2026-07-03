@@ -117,7 +117,8 @@ require_once __DIR__ . '/../includes/header.php';
                     </div>
                     <input type="password" id="passwordInput" name="password" class="w-full pl-10 pr-10 bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" required autocomplete="new-password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$" title="Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character">
                     <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-brand-600 focus:outline-none toggle-password">
-                        <i data-lucide="eye" class="w-4 h-4" id="eyeIcon"></i>
+                        <i data-lucide="eye" class="w-4 h-4 icon-show"></i>
+                        <i data-lucide="eye-off" class="w-4 h-4 icon-hide hidden"></i>
                     </button>
                 </div>
                 
@@ -134,8 +135,8 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
         
         <div class="px-6 sm:px-8 py-5 border-t border-gray-100 bg-gray-50 flex justify-end">
-            <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 px-6 rounded-xl shadow-sm hover:shadow-md transition-all flex items-center">
-                <i data-lucide="save" class="w-4 h-4 mr-2"></i> Create User
+            <button type="submit" id="submitBtn" class="bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 px-6 rounded-xl shadow-sm hover:shadow-md transition-all flex items-center">
+                <i data-lucide="save" class="w-4 h-4 mr-2" id="submitIcon"></i> <span id="submitText">Create User</span>
             </button>
         </div>
     </form>
@@ -143,6 +144,22 @@ require_once __DIR__ . '/../includes/header.php';
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function() {
+            const btn = document.getElementById('submitBtn');
+            const icon = document.getElementById('submitIcon');
+            const text = document.getElementById('submitText');
+            if (btn && icon && text) {
+                btn.classList.add('opacity-75', 'cursor-not-allowed', 'pointer-events-none');
+                icon.setAttribute('data-lucide', 'loader-2');
+                icon.classList.add('animate-spin');
+                text.innerText = 'Creating User...';
+                lucide.createIcons();
+            }
+        });
+    }
+
     const passwordInput = document.getElementById('passwordInput');
     const toggleBtn = document.querySelector('.toggle-password');
     const eyeIcon = document.getElementById('eyeIcon');
@@ -151,8 +168,17 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleBtn.addEventListener('click', function() {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
-            toggleBtn.innerHTML = type === 'password' ? '<i data-lucide="eye" class="w-4 h-4" id="eyeIcon"></i>' : '<i data-lucide="eye-off" class="w-4 h-4" id="eyeIcon"></i>';
-            lucide.createIcons();
+            const iconShow = toggleBtn.querySelector('.icon-show');
+            const iconHide = toggleBtn.querySelector('.icon-hide');
+            if (iconShow && iconHide) {
+                if (type === 'password') {
+                    iconShow.classList.remove('hidden');
+                    iconHide.classList.add('hidden');
+                } else {
+                    iconShow.classList.add('hidden');
+                    iconHide.classList.remove('hidden');
+                }
+            }
         });
     }
 

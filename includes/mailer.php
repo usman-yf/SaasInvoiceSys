@@ -30,7 +30,7 @@ function sendVerificationEmail($to, $name, $token, $expire_mins = 1440)
         $mail->addAddress($to, $name);
 
         $mail->isHTML(true);
-        $mail->Subject = 'Verify Your Account - InvSys';
+        $mail->Subject = 'Welcome to InvSys! Please confirm your email';
 
         $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
         $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';

@@ -242,7 +242,7 @@ setInterval(() => {
 <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(5px); z-index: 10000; align-items: center; justify-content: center; flex-direction: column;">
     <div class="animate-spin rounded-full h-12 w-12 border-4 border-brand-500 border-t-transparent mb-4"></div>
     <div class="text-brand-600 font-bold text-lg flex items-center">
-        <i data-lucide="send" class="w-5 h-5 mr-2"></i> Dispatching Email...
+        <i data-lucide="send" class="w-5 h-5 mr-2"></i> Resending Verification Email...
     </div>
 </div>
 
