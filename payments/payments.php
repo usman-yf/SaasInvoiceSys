@@ -5,7 +5,7 @@ require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/functions.php';
 $invoice_id = isset($_GET['invoice_id']) ? (int)$_GET['invoice_id'] : 0;
 $error = '';
-$success = '';
+$success = isset($_GET['msg']) ? sanitize($conn, $_GET['msg']) : '';
 
 // Process Payment
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'pay') {
@@ -43,7 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
                 logActivity($conn, $_SESSION['user_id'], 'Payment Recorded', "Payment of " . htmlspecialchars($global_currency) . " " . number_format($amount, 2) . " via $method for Invoice #{$inv_no_str}");
             }
             
-            $success = "Payment recorded successfully.";
+            // Redirect to avoid double submission on refresh
+            redirect(BASE_URL . "/payments/payments.php?invoice_id=$invoice_id&msg=" . urlencode("Payment recorded successfully."));
         } else {
             $error = "Error recording payment: " . mysqli_error($conn);
         }
