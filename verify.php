@@ -248,8 +248,11 @@ if (mysqli_num_rows($res) > 0) {
                         <p class="text-sm text-gray-500 mb-6 max-w-sm">Thank you for your business. Please remit payment within 14 days of receiving this invoice.</p>
                         <?php
                         $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-                        $veri_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . BASE_URL . "/verify.php?token=" . urlencode($invoice['token']) . "&inv=" . urlencode($invoice['invoice_no']);
-                        $qr_api_url = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&ecc=H&data=" . urlencode($veri_url);
+                        $veri_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . BASE_URL . "/verify.php?token=" . urlencode($invoice['token']);
+                        
+                        $qr_size = htmlspecialchars(get_setting($conn, 'qr_code_size', '400'));
+                        $qr_ecc = htmlspecialchars(get_setting($conn, 'qr_code_ecc', 'H'));
+                        $qr_api_url = "https://api.qrserver.com/v1/create-qr-code/?size={$qr_size}x{$qr_size}&ecc={$qr_ecc}&data=" . urlencode($veri_url);
                         ?>
                         <div class="flex space-x-4">
                             <div class="inline-block p-2 border border-gray-100 rounded-xl bg-white shadow-sm text-center">
