@@ -13,11 +13,8 @@ if (!isset($_SESSION['user_id'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'clear_all') {
     if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
         mysqli_query($conn, "TRUNCATE TABLE activity_logs");
-    } else {
-        $uid = (int)$_SESSION['user_id'];
-        mysqli_query($conn, "DELETE FROM activity_logs WHERE user_id = $uid");
+        $success_msg = "All logs have been cleared successfully.";
     }
-    $success_msg = "All logs have been cleared successfully.";
 }
 
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -65,6 +62,7 @@ require_once __DIR__ . '/includes/header.php';
         <p class="text-gray-500 mt-1">Monitor all user activities and system events</p>
     </div>
     
+    <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
     <div class="flex items-center space-x-3">
         <form method="POST" action="" onsubmit="return confirm('Are you sure you want to clear all logs? This cannot be undone.');">
             <input type="hidden" name="action" value="clear_all">
@@ -73,6 +71,7 @@ require_once __DIR__ . '/includes/header.php';
             </button>
         </form>
     </div>
+    <?php endif; ?>
 </div>
 
 <?php if (isset($success_msg)): ?>
