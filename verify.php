@@ -71,20 +71,19 @@ if (mysqli_num_rows($res) > 0) {
 <body class="text-gray-800 antialiased min-h-screen flex flex-col py-10">
     
     <div class="container mx-auto px-4 max-w-4xl relative z-10">
-        <!-- Logo / App Name -->
-        <div class="text-center mb-8 hide-on-print flex justify-center items-center">
-            <span class="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-brand-700 to-brand-500 tracking-tight">
-                <?= htmlspecialchars($header_company_name) ?>
-            </span>
-        </div>
-
         <?php if (mysqli_num_rows($res) == 0): ?>
             <!-- Premium Error Card -->
-            <div class="relative bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-red-100 mb-10 overflow-hidden hide-on-print group mx-auto max-w-2xl">
+            <div class="relative bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-red-100 mb-10 overflow-hidden hide-on-print group w-full">
                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-500 via-rose-500 to-red-500"></div>
                 <div class="absolute -right-20 -top-20 w-64 h-64 bg-red-50 rounded-full blur-3xl opacity-60 pointer-events-none transition-transform duration-1000 group-hover:scale-110"></div>
                 
-                <div class="relative p-8 sm:p-12 text-center flex flex-col items-center">
+                <div class="relative p-8 sm:p-12 text-center flex flex-col items-center w-full">
+                    <div class="w-full text-center pb-6 mb-4 border-b border-gray-100/50">
+                        <span class="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-brand-700 to-brand-500 tracking-tight">
+                            <?= htmlspecialchars($header_company_name) ?>
+                        </span>
+                    </div>
+
                     <div class="relative shrink-0 mb-6">
                         <div class="absolute inset-0 bg-red-400 rounded-2xl blur-lg opacity-30 animate-pulse"></div>
                         <div class="w-16 h-16 bg-gradient-to-br from-red-400 to-red-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-red-500/30 transform transition-transform duration-500 hover:scale-105 border border-white/20 relative z-10">
@@ -110,42 +109,50 @@ if (mysqli_num_rows($res) > 0) {
         ?>
             
             <!-- Premium Success Hero Card -->
-            <div class="relative bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100/80 mb-10 overflow-hidden hide-on-print group mx-auto max-w-3xl">
+            <div class="relative bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100/80 mb-10 overflow-hidden hide-on-print group w-full">
                 <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-green-400 via-emerald-500 to-green-500"></div>
                 
                 <div class="absolute -right-20 -top-20 w-64 h-64 bg-green-50 rounded-full blur-3xl opacity-60 pointer-events-none transition-transform duration-1000 group-hover:scale-110"></div>
                 <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-brand-50 rounded-full blur-3xl opacity-60 pointer-events-none transition-transform duration-1000 group-hover:scale-110"></div>
                 
-                <div class="relative p-8 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div class="flex flex-col md:flex-row items-center gap-6 w-full md:w-auto">
-                        <div class="relative shrink-0">
-                            <div class="absolute inset-0 bg-green-400 rounded-3xl blur-lg opacity-40 animate-pulse"></div>
-                            <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-600 text-white rounded-3xl flex items-center justify-center shadow-xl shadow-green-500/30 transform transition-transform duration-500 hover:scale-105 hover:-rotate-3 border border-white/20 relative z-10">
-                                <i data-lucide="shield-check" class="w-10 h-10 drop-shadow-md"></i>
+                <div class="relative p-8 sm:p-10 flex flex-col w-full">
+                    <div class="w-full text-center pb-6 mb-6 border-b border-gray-100/50">
+                        <span class="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-brand-700 to-brand-500 tracking-tight">
+                            <?= htmlspecialchars($header_company_name) ?>
+                        </span>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div class="flex flex-col md:flex-row items-center gap-6 w-full md:w-auto">
+                            <div class="relative shrink-0">
+                                <div class="absolute inset-0 bg-green-400 rounded-3xl blur-lg opacity-40 animate-pulse"></div>
+                                <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-600 text-white rounded-3xl flex items-center justify-center shadow-xl shadow-green-500/30 transform transition-transform duration-500 hover:scale-105 hover:-rotate-3 border border-white/20 relative z-10">
+                                    <i data-lucide="shield-check" class="w-10 h-10 drop-shadow-md"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center md:text-left">
+                                <div class="inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-full bg-green-50 border border-green-100 text-green-700 text-[10px] font-bold uppercase tracking-widest mb-3">
+                                    <span class="relative flex h-2 w-2">
+                                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                      <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                    </span>
+                                    <span>Cryptographically Verified</span>
+                                </div>
+                                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight mb-2">
+                                    Authentic Document
+                                </h2>
+                                <p class="text-gray-500 text-sm font-medium">
+                                    This invoice was securely generated and verified by <span class="text-gray-800 font-bold"><?= htmlspecialchars($header_company_name) ?></span>.
+                                </p>
                             </div>
                         </div>
                         
-                        <div class="text-center md:text-left">
-                            <div class="inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-full bg-green-50 border border-green-100 text-green-700 text-[10px] font-bold uppercase tracking-widest mb-3">
-                                <span class="relative flex h-2 w-2">
-                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                  <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                                </span>
-                                <span>Cryptographically Verified</span>
+                        <div class="hidden md:flex shrink-0 pl-8 border-l border-gray-100 flex-col justify-center text-right h-20">
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1.5">Network Status</p>
+                            <div class="flex items-center justify-end text-green-600 font-bold text-sm bg-green-50 px-3 py-1.5 rounded-lg border border-green-100">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 mr-1.5"></i> SECURE
                             </div>
-                            <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight mb-2">
-                                Authentic Document
-                            </h2>
-                            <p class="text-gray-500 text-sm font-medium">
-                                This invoice was securely generated and verified by <span class="text-gray-800 font-bold"><?= htmlspecialchars($header_company_name) ?></span>.
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div class="hidden md:flex shrink-0 pl-8 border-l border-gray-100 flex-col justify-center text-right h-20">
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1.5">Network Status</p>
-                        <div class="flex items-center justify-end text-green-600 font-bold text-sm bg-green-50 px-3 py-1.5 rounded-lg border border-green-100">
-                            <i data-lucide="check-circle-2" class="w-4 h-4 mr-1.5"></i> SECURE
                         </div>
                     </div>
                 </div>
