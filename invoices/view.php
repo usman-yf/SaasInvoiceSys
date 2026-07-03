@@ -57,7 +57,7 @@ elseif ($zStatus == 'Rejected' || $zStatus == 'Error')
                 <input type="hidden" name="action" value="generate">
                 <button type="submit"
                     class="px-3 py-2 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors flex items-center text-sm shadow-sm">
-                    <i data-lucide="file-code" class="w-4 h-4 mr-2 text-brand-600"></i> Generate XML
+                    <i data-lucide="file-code" class="w-4 h-4 mr-2 text-brand-600"></i> Generate ZATCA
                 </button>
             </form>
         <?php elseif ($zStatus == 'Generated' || $zStatus == 'Rejected'): ?>
