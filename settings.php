@@ -427,7 +427,7 @@ require_once __DIR__ . '/includes/header.php';
                     </div>
 
                     <div class="p-6 flex-grow">
-                        <div class="space-y-5">
+                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
                                     Toast Position
@@ -483,7 +483,7 @@ require_once __DIR__ . '/includes/header.php';
                     </div>
 
                     <div class="p-6 flex-grow">
-                        <div class="space-y-5">
+                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
                                     Show Premium Preloader
@@ -537,7 +537,7 @@ require_once __DIR__ . '/includes/header.php';
                     </div>
 
                     <div class="p-6 flex-grow">
-                        <div class="space-y-5">
+                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
                                     Email Verification Expiration (Minutes)
@@ -605,7 +605,7 @@ require_once __DIR__ . '/includes/header.php';
         <!-- 2FA Security Settings Card -->
         <div>
             <form action="" method="post">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col">
                     <div class="bg-brand-50 text-brand-700 px-6 py-4 border-b border-brand-100 rounded-t-2xl">
                         <h3 class="text-lg font-bold flex items-center">
                             <i data-lucide="shield-alert" class="w-5 h-5 mr-2 text-brand-600"></i> 2-Factor Authentication
@@ -613,7 +613,7 @@ require_once __DIR__ . '/includes/header.php';
                     </div>
 
                     <div class="p-6 flex-grow">
-                        <div class="space-y-5">
+                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
                                     Enable 2-Factor Authentication <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Require an email code when logging in."></i></label>
@@ -648,7 +648,7 @@ require_once __DIR__ . '/includes/header.php';
         <!-- Remember Me Settings Card -->
         <div>
             <form action="" method="post">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col">
                     <div class="bg-brand-50 text-brand-700 px-6 py-4 border-b border-brand-100 rounded-t-2xl">
                         <h3 class="text-lg font-bold flex items-center">
                             <i data-lucide="log-in" class="w-5 h-5 mr-2 text-brand-600"></i> Remember Me Options
@@ -656,7 +656,7 @@ require_once __DIR__ . '/includes/header.php';
                     </div>
 
                     <div class="p-6 flex-grow">
-                        <div class="space-y-5">
+                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
                                     Enable "Remember Me" Option <i data-lucide="info" class="w-4 h-4 ml-2 text-gray-400" title="Please provide the enable "remember me" option."></i></label>
