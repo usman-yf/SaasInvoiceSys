@@ -149,7 +149,7 @@ require_once __DIR__ . '/../includes/header.php';
                         <i data-lucide="user-check" class="w-5 h-5 mr-2 text-brand-500"></i> Selected Customer Details
                         <span id="zatca_route_badge" class="hidden"></span>
                     </h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-sm">
                         <div>
                             <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Email</span>
                             <span id="cd_email" class="font-semibold text-gray-800 truncate block"></span>
@@ -166,9 +166,9 @@ require_once __DIR__ . '/../includes/header.php';
                             <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">CR Number</span>
                             <span id="cd_cr" class="font-semibold text-gray-800 truncate block"></span>
                         </div>
-                        <div class="md:col-span-4 pt-3 border-t border-brand-100">
-                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Address & Location</span>
-                            <span id="cd_address" class="font-medium text-gray-600 leading-relaxed"></span>
+                        <div>
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Address</span>
+                            <span id="cd_address" class="font-semibold text-gray-800 truncate block" title="Full address will populate here"></span>
                         </div>
                     </div>
                   </div>
@@ -208,7 +208,9 @@ require_once __DIR__ . '/../includes/header.php';
                                 if(c.postal_code) addrParts.push(c.postal_code);
                                 if(c.country) addrParts.push(c.country);
                                 
-                                document.getElementById('cd_address').textContent = addrParts.length > 0 ? addrParts.join(', ') : (c.address || 'N/A');
+                                const fullAddress = addrParts.length > 0 ? addrParts.join(', ') : (c.address || 'N/A');
+                                document.getElementById('cd_address').textContent = fullAddress;
+                                document.getElementById('cd_address').title = fullAddress;
                                 
                                 const badge = document.getElementById('zatca_route_badge');
                                 const isStandard = c.vat_number && c.vat_number.trim().length === 15;
