@@ -191,11 +191,11 @@ require_once __DIR__ . '/../includes/header.php';
                                 const badge = document.getElementById('zatca_route_badge');
                                 const isStandard = c.vat_number && c.vat_number.trim().length === 15;
                                 if (isStandard) {
-                                    badge.className = "ml-auto px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200 uppercase tracking-wider flex items-center shadow-sm";
-                                    badge.innerHTML = '<i data-lucide="shield-check" class="w-3 h-3 mr-1"></i> Standard (B2B)';
+                                    badge.className = "ml-auto px-3 py-1.5 rounded-full text-xs font-bold bg-purple-100 text-purple-700 border border-purple-200 uppercase tracking-wider flex items-center shadow-sm transform hover:-translate-y-1 transition-all duration-300 cursor-default";
+                                    badge.innerHTML = '<i data-lucide="shield-check" class="w-4 h-4 mr-1.5"></i> Standard (B2B)';
                                 } else {
-                                    badge.className = "ml-auto px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200 uppercase tracking-wider flex items-center shadow-sm";
-                                    badge.innerHTML = '<i data-lucide="zap" class="w-3 h-3 mr-1"></i> Simplified (B2C)';
+                                    badge.className = "ml-auto px-3 py-1.5 rounded-full text-xs font-bold bg-blue-100 text-blue-700 border border-blue-200 uppercase tracking-wider flex items-center shadow-sm transform hover:-translate-y-1 transition-all duration-300 cursor-default";
+                                    badge.innerHTML = '<i data-lucide="zap" class="w-4 h-4 mr-1.5"></i> Simplified (B2C)';
                                 }
                                 if (window.lucide) { window.lucide.createIcons(); }
                                 
