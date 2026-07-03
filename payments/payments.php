@@ -106,9 +106,9 @@ $balance = $invoice['total'] - $total_paid;
     <!-- Payment Form -->
     <div class="lg:col-span-5">
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full">
-            <div class="bg-brand-600 text-white px-6 py-4 border-b border-brand-700 rounded-t-[15px]">
+            <div class="bg-brand-50 text-brand-700 px-6 py-4 border-b border-brand-100 rounded-t-[15px]">
                 <h3 class="text-lg font-bold flex items-center">
-                    <i data-lucide="plus-circle" class="w-5 h-5 mr-2 text-brand-200"></i> Add Payment
+                    <i data-lucide="plus-circle" class="w-5 h-5 mr-2 text-brand-600"></i> Add Payment
                 </h3>
             </div>
             
@@ -170,8 +170,8 @@ $balance = $invoice['total'] - $total_paid;
     <!-- Payments List -->
     <div class="lg:col-span-7">
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
-            <div class="p-6 border-b border-gray-100 bg-gray-50/50">
-                <h3 class="text-lg font-bold text-gray-900 flex items-center">
+            <div class="px-6 py-4 border-b border-brand-100 bg-brand-50 text-brand-700 rounded-t-[15px]">
+                <h3 class="text-lg font-bold flex items-center">
                     <i data-lucide="history" class="w-5 h-5 mr-2 text-brand-600"></i> Payment History
                 </h3>
             </div>
