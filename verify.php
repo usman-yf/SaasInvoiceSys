@@ -68,7 +68,7 @@ if (mysqli_num_rows($res) > 0) {
         }
     </style>
 </head>
-<body class="text-gray-800 antialiased min-h-screen flex flex-col py-10">
+<body class="text-gray-800 antialiased min-h-screen flex flex-col py-5">
     
     <div class="container mx-auto px-4 max-w-4xl relative z-10">
         <?php if (mysqli_num_rows($res) == 0): ?>
@@ -78,7 +78,7 @@ if (mysqli_num_rows($res) > 0) {
                 <div class="absolute -right-20 -top-20 w-64 h-64 bg-red-50 rounded-full blur-3xl opacity-60 pointer-events-none transition-transform duration-1000 group-hover:scale-110"></div>
                 
                 <div class="relative p-8 sm:p-12 text-center flex flex-col items-center w-full">
-                    <div class="w-full text-center pb-6 mb-4 border-b border-gray-100/50">
+                    <div class="w-full text-center pb-1 mb-1 border-b border-gray-100/50">
                         <span class="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-brand-700 to-brand-500 tracking-tight">
                             <?= htmlspecialchars($header_company_name) ?>
                         </span>
@@ -116,7 +116,7 @@ if (mysqli_num_rows($res) > 0) {
                 <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-brand-50 rounded-full blur-3xl opacity-60 pointer-events-none transition-transform duration-1000 group-hover:scale-110"></div>
                 
                 <div class="relative p-8 sm:p-10 flex flex-col w-full">
-                    <div class="w-full text-center pb-6 mb-6 border-b border-gray-100/50">
+                    <div class="w-full text-center pb-1 mb-1 border-b border-gray-100/50">
                         <span class="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-brand-700 to-brand-500 tracking-tight">
                             <?= htmlspecialchars($header_company_name) ?>
                         </span>
