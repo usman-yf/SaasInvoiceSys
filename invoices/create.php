@@ -99,9 +99,11 @@ require_once __DIR__ . '/../includes/header.php';
                     <select name="customer_id" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block p-3 transition-colors outline-none shadow-sm" required>
                         <option value="">Select Customer...</option>
                         <?php
-                        $cres = mysqli_query($conn, "SELECT id, name FROM customers ORDER BY name ASC");
+                        $cres = mysqli_query($conn, "SELECT * FROM customers ORDER BY name ASC");
+                        $customersData = [];
                         while ($c = mysqli_fetch_assoc($cres)) {
-                            echo "<option value='{$c['id']}'>{$c['name']}</option>";
+                            $customersData[$c['id']] = $c;
+                            echo "<option value='{$c['id']}'>" . htmlspecialchars($c['name']) . "</option>";
                         }
                         ?>
                     </select>
@@ -116,6 +118,80 @@ require_once __DIR__ . '/../includes/header.php';
                     <p class="mt-1 text-xs text-gray-500">Auto-generated identifier</p>
                 </div>
             </div>
+            
+            <!-- Customer Details Card (Animated) -->
+            <div id="customerDetailsWrapper" class="max-h-0 opacity-0 overflow-hidden transition-all duration-500 ease-in-out mt-0">
+                <div class="bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 p-6 shadow-sm mt-6">
+                    <h4 class="text-sm font-bold text-gray-900 mb-4 flex items-center">
+                        <i data-lucide="user-check" class="w-4 h-4 mr-2 text-brand-500"></i> Selected Customer Details
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-sm">
+                        <div>
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Email</span>
+                            <span id="cd_email" class="font-semibold text-gray-800 truncate block"></span>
+                        </div>
+                        <div>
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Phone Number</span>
+                            <span id="cd_phone" class="font-semibold text-gray-800 truncate block"></span>
+                        </div>
+                        <div>
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">VAT Number</span>
+                            <span id="cd_vat" class="font-semibold text-gray-800 truncate block"></span>
+                        </div>
+                        <div>
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">CR Number</span>
+                            <span id="cd_cr" class="font-semibold text-gray-800 truncate block"></span>
+                        </div>
+                        <div class="md:col-span-4 pt-4 border-t border-gray-100">
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Address & Location</span>
+                            <span id="cd_address" class="font-medium text-gray-600 leading-relaxed"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <script>
+                const customersData = <?= json_encode($customersData ?? []) ?>;
+                document.addEventListener('DOMContentLoaded', function() {
+                    const customerSelect = document.querySelector('select[name="customer_id"]');
+                    const wrapper = document.getElementById('customerDetailsWrapper');
+                    
+                    function updateCustomerDetails() {
+                        const id = customerSelect.value;
+                        if (id && customersData[id]) {
+                            const c = customersData[id];
+                            document.getElementById('cd_email').textContent = c.email || 'N/A';
+                            document.getElementById('cd_phone').textContent = c.phone || 'N/A';
+                            document.getElementById('cd_vat').textContent = c.vat_number || 'N/A';
+                            document.getElementById('cd_cr').textContent = c.cr_number || 'N/A';
+                            
+                            // Build address
+                            let addrParts = [];
+                            if(c.building_no) addrParts.push(c.building_no);
+                            if(c.street) addrParts.push(c.street);
+                            if(c.district) addrParts.push(c.district);
+                            if(c.city) addrParts.push(c.city);
+                            if(c.postal_code) addrParts.push(c.postal_code);
+                            if(c.country) addrParts.push(c.country);
+                            
+                            document.getElementById('cd_address').textContent = addrParts.length > 0 ? addrParts.join(', ') : (c.address || 'N/A');
+                            
+                            // Show wrapper
+                            wrapper.classList.remove('max-h-0', 'opacity-0', 'mt-0');
+                            wrapper.classList.add('max-h-[500px]', 'opacity-100');
+                            // Re-initialize lucide icons if needed, though they are static above
+                        } else {
+                            // Hide wrapper
+                            wrapper.classList.add('max-h-0', 'opacity-0', 'mt-0');
+                            wrapper.classList.remove('max-h-[500px]', 'opacity-100');
+                        }
+                    }
+                    
+                    customerSelect.addEventListener('change', updateCustomerDetails);
+                    // Initial check
+                    updateCustomerDetails();
+                });
+            </script>
         </div>
 
         <!-- Invoice Items -->
